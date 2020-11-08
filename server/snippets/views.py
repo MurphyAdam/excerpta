@@ -12,6 +12,9 @@ from rest_framework import viewsets
 
 @api_view(['GET'])
 def api_root(request, format=None):
+	"""
+	This is the api root view. It provides the available views.
+	"""
 	return Response({
 			'users': reverse('user-list', request=request, format=format),
 			'snippets': reverse('snippet-list', request=request, format=format)
