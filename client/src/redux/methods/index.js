@@ -23,29 +23,17 @@ export function addObjectToArray(array, newItem) {
 	}
 }
 
-export function updateObjectInArrayWithId(array, newItem) {
+export function updateObjectInArrayWithId(array, rest) {
+	// arguments: array, rest object
+	// rest objects must at least contain the id of the object you wish to update
 	return array.map(item => {
-		if (item.id !== newItem.id) {
+		if (item.id !== rest.id) {
 			// This isn't the item we care about - keep it as-is
 			return item
 			}
 		// Otherwise, this is the one we want - return an updated value
 		return {
-		...item,
-		...newItem
-		}
-	})
-}
-
-export function updateObjectCodePropertyInArrayWithId(array, id, code) {
-	return array.map(item => {
-		if (item.id !== id) {
-			// This isn't the item we care about - keep it as-is
-			return item
-			}
-		// Otherwise, this is the one we want - return an updated value
-		return {
-		...item, code
+		...item, ...rest
 		}
 	})
 }

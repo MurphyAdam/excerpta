@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {makeStyles} from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -70,16 +70,6 @@ function PrimaryAppBar(props) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleLogout = () => {
-    if(isAuthenticated){
-      logout();
-      // we setAnchorEl(null) to avoid the menu being open
-      // after a login
-      setAnchorEl(null);
-      history.push('/');
-    }
-  }
-
   const handleProfileMenuOpen = e => setAnchorEl(e.currentTarget);
 
   const handleMobileMenuOpen = e => setMobileMoreAnchorEl(e.currentTarget);
@@ -90,6 +80,16 @@ function PrimaryAppBar(props) {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
+
+  const handleLogout = () => {
+    if(isAuthenticated){
+      logout();
+      // we setAnchorEl(null) to avoid the menu being open
+      // after a login
+      setAnchorEl(null);
+      history.push('/');
+    }
+  }
 
   const handleThemeChange = e => {
     if(e.target.checked) toggleDarkMode({theme:'dark', darkModeOn:true});

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getCookie } from '../util/Cookies';
 
 // window origin - base url
 const API_ENDPOINT = `${window.location.origin}/api`;

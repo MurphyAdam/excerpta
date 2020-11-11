@@ -1,4 +1,4 @@
-import React, { useState, lazy } from 'react';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -10,14 +10,9 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import MailIcon from '@material-ui/icons/Mail';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import IconButton from '@material-ui/core/IconButton';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
 import CodeIcon from '@material-ui/icons/Code';
-import WatchLaterIcon from '@material-ui/icons/WatchLater';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
 import SnippetManager from './SnippetManager';
-
 
 const useStyles = makeStyles((theme) => ({
   card: {
