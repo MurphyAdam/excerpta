@@ -16,14 +16,10 @@ import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import SnippetManager from '../components/Snippet/SnippetManager';
-import {CircularLoader} from '../components/Common/Loaders';
+import SnippetManager from './SnippetManager';
 
-const SignIn = lazy(() => import('../components/Auth/SignIn'));
-const SignUp = lazy(() => import('../components/Auth/SignUp'));
-const AddSnippet = lazy(() => import('../components/Snippet/AddSnippet'));
 
-export const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   card: {
     display: "flex",
     margin: theme.spacing(1),
@@ -45,18 +41,10 @@ export const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const mapLazyComponents = {
-  SignIn: SignIn,
-  SignUp: SignUp,
-}
-
 const Home = (props) => {
 	
   const { currentUser, isAuthenticated } = {...props};
   const classes = useStyles();
-  const [currentAuthOP, setCurrentAuthOP] = useState("SignIn");
-  const [displayAddSnippetComponent, setDisplayAddSnippetComponent] = useState(false);
-  const AuthComponent = mapLazyComponents[currentAuthOP];
 
   return (
     <React.Fragment>
@@ -72,7 +60,7 @@ const Home = (props) => {
                         variant="h5" 
                         gutterBottom
                       >
-                        Conmentarium, a simple code snippets management for all ideas.
+                        Snippets: A Simple Code Snippets Manager
                       </Typography>
                       <Typography 
                         variant="subtitle2" 
@@ -102,7 +90,7 @@ const Home = (props) => {
                         title="Source code" 
                         aria-label="Source code" 
                         color="inherit"
-                        href="https://github.com/MurphyAdam/Conmentarium"
+                        href="https://github.com/MurphyAdam/Snippets"
                         target="_blank"
                         rel="noopener noreferrer"
                         >
@@ -134,37 +122,16 @@ const Home = (props) => {
                     <CardMedia
                       className={classes.cardMedia}
                       image="https://res.cloudinary.com/lang-code/image/upload/v1600369514/images/notes_lkh985.png"
-                      title="Conmentarium"
+                      title="Snippets"
                     />
                   </Card>
                 </div>
               </Grid>
-              <React.Suspense fallback={<CircularLoader />}>
-                <AuthComponent setCurrentAuthOP={setCurrentAuthOP} />
-              </React.Suspense>
             </Grid>
           </React.Fragment>
           :
-          <React.Fragment>
-            <IconButton onClick={() => setDisplayAddSnippetComponent(!displayAddSnippetComponent)}>
-              <NoteAddIcon onClick={() => setDisplayAddSnippetComponent(!displayAddSnippetComponent)}/>
-            </IconButton>
-            <Divider className={classes.divider} />
-            {displayAddSnippetComponent &&
-              <React.Fragment>
-                <React.Suspense fallback={<CircularLoader />}>
-                  <AddSnippet setCurrentAuthOP={setCurrentAuthOP} 
-                    setDisplayAddSnippetComponent={setDisplayAddSnippetComponent} />
-                </React.Suspense>
-                <Divider className={classes.divider} />
-              </React.Fragment>
-            }
-            <IconButton>
-              <WatchLaterIcon />
-            </IconButton>
-            <SnippetManager currentUser={currentUser} 
-              isAuthenticated={isAuthenticated} />
-          </React.Fragment>
+          <SnippetManager currentUser={currentUser}
+            isAuthenticated={isAuthenticated} />
         }
     </React.Fragment>
   );

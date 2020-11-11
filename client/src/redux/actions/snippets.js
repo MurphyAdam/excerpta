@@ -8,6 +8,7 @@ import {
 	DELETE_SNIPPET,
 	DELETE_SNIPPET_SUCCESS,
 	DELETE_SNIPPET_FAILURE,
+	UPDATE_SNIPPET,
 } from '../constants/snippets';
 import { error as notificationError } from 'react-notification-system-redux';
 import { fetchSnippetsService, fetchSnippetService, 
@@ -57,6 +58,14 @@ export const setSnippet = (snippet) => {
 			dispatch(fetchSnippetsSuccess({snippets}));
 			return;
 		}
+	}
+}
+
+const updateSnippetAction = data => ActionCreatorFactory(UPDATE_SNIPPET, data);
+
+export function updateSnippet(snippet) {
+	return (dispatch) => {
+		dispatch(updateSnippetAction(snippet));
 	}
 }
 

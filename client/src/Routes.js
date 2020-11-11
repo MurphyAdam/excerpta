@@ -1,4 +1,5 @@
 import Home from './containers/Home';
+import SnippetManager from './containers/SnippetManager';
 import SignIn from './components/Auth/SignIn';
 import SignUp from './components/Auth/SignUp';
 import NotFound from './components/Errors/NotFound';
@@ -10,6 +11,13 @@ const Routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    needsAuthentication: false,
+    needsAuthorisation: false
+  },
+  {
+    path: '/editor',
+    name: 'Snippets Editor',
+    component: SnippetManager,
     needsAuthentication: false,
     needsAuthorisation: false
   },

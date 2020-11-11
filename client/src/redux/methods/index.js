@@ -37,6 +37,19 @@ export function updateObjectInArrayWithId(array, newItem) {
 	})
 }
 
+export function updateObjectCodePropertyInArrayWithId(array, id, code) {
+	return array.map(item => {
+		if (item.id !== id) {
+			// This isn't the item we care about - keep it as-is
+			return item
+			}
+		// Otherwise, this is the one we want - return an updated value
+		return {
+		...item, code
+		}
+	})
+}
+
 export function filterArrayWithId(array, itemId) {
 	return array.filter(item => {
 		if (item.id !== itemId) {

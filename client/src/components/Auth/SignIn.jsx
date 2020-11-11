@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SignIn = (props) => {
 
-  changeDocumentTitle("Lang&Code - Sign-in");
+  changeDocumentTitle("Snippets - Sign-in");
   const { currentUser, isAuthenticated, login } = {...props};
   const history = useHistory();
   const classes = useStyles();
