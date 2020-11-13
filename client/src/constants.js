@@ -10,4 +10,12 @@ const snippetColors = [
   "rgb(103 58 183 / 45%)"
 ];
 
-export { snippetColors };
+const languages = ["ada", 
+"arduino", "bash", 
+"bat", "c", "clojure", "cobol", "cobolfree", "coffee-script", "cpp", "csharp", 
+"css", "fortran", "go", "haskell", "hexdump", "html", "java", "javascript", "jsp", 
+"julia", "kotlin", "less", "lua", "make", "matlab", "md", "objective-c",
+ "perl", "php", "prolog", "python", "rust", "sql", "swift",
+];
+
+export { snippetColors, languages };
