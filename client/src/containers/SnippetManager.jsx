@@ -11,6 +11,7 @@ import Divider from '@material-ui/core/Divider';
 
 import { AntTabs, AntTab } from '../components/Snippet/Tabs';
 import TabContainer from '../components/Snippet/TabContainer';
+import NewSnippet from '../components/Snippet/NewSnippet';
 
 const useStyles = makeStyles((theme) => ({
   menuList: {
@@ -29,6 +30,7 @@ function SnippetManager (props){
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [tab, setTab] = useState(0)
+  const [openCreateNew, setOpenCreateNew] = useState(false);
   
   const handleClick = (event) => setAnchorEl(event.currentTarget);
 
@@ -73,7 +75,7 @@ function SnippetManager (props){
               },
             }}
           >
-            <MenuItem>
+            <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
               New
             </MenuItem>
             <MenuItem key="save" onClick={() => saveSnippet(currentTabId)}>
@@ -113,6 +115,14 @@ function SnippetManager (props){
             updateSnippet={updateSnippet} 
             saveSnippet={saveSnippet} />
         )) 
+      }
+      {openCreateNew &&
+        <NewSnippet 
+          open={openCreateNew}
+          onOpen={() => {setOpenCreateNew(!openCreateNew)}}
+          onClose={() => {setOpenCreateNew(false)}}
+          setCurrentTabId={setCurrentTabId}
+        />
       }
     </React.Fragment>
   )
