@@ -3,6 +3,7 @@ import { FETCH_SNIPPET,
 	FETCH_SNIPPET_FAILURE,
 	REFETCH_SNIPPET_SUCCESS,
 	DELETE_SNIPPET_SUCCESS,
+	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
 	 } from '../constants/snippets';
 import { INITIATE_AUTH_CLEANUP } from '../constants/auth';
@@ -38,7 +39,7 @@ const INITIAL_STATE = {
 			    owner: "majdi",
 			    edited: false,
 			    highlight: "http://127.0.0.1:8000/api/snippets/3/highlight/?format=json",
-			    title: "Javascript test",
+			    title: "Javascript test",//eslint-disable-next-line
 			    code: "<script>alert(1);<\/script>",
 			    linenos: true,
 			    language: "js",
@@ -60,7 +61,7 @@ const INITIAL_STATE = {
 			    owner: "majdi",
 			    edited: false,
 			    highlight: "http://127.0.0.1:8000/api/snippets/5/highlight/?format=json",
-			    title: "",
+			    title: "ikhan",
 			    code: "print(12346)",
 			    linenos: false,
 			    language: "python",
@@ -79,6 +80,11 @@ const INITIAL_STATE = {
 function snippets(state=INITIAL_STATE, action) {
 
 	switch (action.type){
+		case CREATE_SNIPPET: {
+			return {...state,
+					snippets: [...state.snippets, action.payload],
+			};
+		}
 		case UPDATE_SNIPPET: {
 			return {...state,
 					snippets: updateObjectInArrayWithId(state.snippets, action.payload),

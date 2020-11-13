@@ -8,12 +8,12 @@ import {
 	DELETE_SNIPPET,
 	DELETE_SNIPPET_SUCCESS,
 	DELETE_SNIPPET_FAILURE,
+	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
 } from '../constants/snippets';
 import { error as notificationError } from 'react-notification-system-redux';
 import { fetchSnippetsService, fetchSnippetService, 
 	deleteSnippetService } from '../../services/snippets-api';
-import { concatArrayOfObjectsAndSortWithDateAsc } from '../methods';
 
 const ActionCreatorFactory = (type, payload=null) => {
 	return {
@@ -50,22 +50,19 @@ export function getSnippets() {
 	};
 }
 
-export const setSnippet = (snippet) => {
-	return (dispatch, getState) => {
-		if(snippet) {
-			let snippets = getState().snippets.snippets;
-			snippets = concatArrayOfObjectsAndSortWithDateAsc(snippets, [snippet])
-			dispatch(fetchSnippetsSuccess({snippets}));
-			return;
-		}
-	}
-}
-
 const updateSnippetAction = data => ActionCreatorFactory(UPDATE_SNIPPET, data);
 
 export function updateSnippet(snippet) {
 	return (dispatch) => {
 		dispatch(updateSnippetAction(snippet));
+	}
+}
+
+const addSnippetAction = data => ActionCreatorFactory(CREATE_SNIPPET, data);
+
+export function addSnippet(snippet) {
+	return (dispatch) => {
+		dispatch(addSnippetAction(snippet));
 	}
 }
 

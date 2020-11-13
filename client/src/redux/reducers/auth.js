@@ -47,7 +47,7 @@ function auth(state=INITIAL_STATE, action) {
 		case LOAD_CURRENT_USER_SUCCESS: {
 			return {...state, 
 				currentUser: {...state.currentUser,
-					authenticated: true, 
+					authenticated: false, 
 					user: action.payload.user,
 					isLoaded: true, 
 					isLoading: false, 

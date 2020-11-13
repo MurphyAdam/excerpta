@@ -10,7 +10,6 @@ import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
-import ChatIcon from '@material-ui/icons/Chat';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import PeopleIcon from '@material-ui/icons/People';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
@@ -23,9 +22,6 @@ import { logout } from '../../redux/actions/auth';
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
   },
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -152,17 +148,6 @@ function PrimaryAppBar(props) {
             <p>Users</p>
           </MenuItem>,
 
-          <MenuItem key="chat">
-            <IconButton 
-              aria-label="Chat" 
-              component={RouterLink} 
-              to="/chat" 
-              color="inherit">
-              <ChatIcon />
-            </IconButton>
-            <p>Chat</p>
-          </MenuItem>,
-
           <MenuItem key="profileMenu" onClick={handleProfileMenuOpen}>
             <IconButton
               aria-label="account of current user"
@@ -170,7 +155,7 @@ function PrimaryAppBar(props) {
               aria-haspopup="true"
               color="inherit"
               onClick={handleProfileMenuOpen}>
-              <Avatar src={currentUser.user._links.avatar} 
+              <Avatar src={currentUser.user.avatar} 
                 alt={currentUser.user.username}> {currentUser.user.username[0]} 
               </Avatar>
             </IconButton>
@@ -192,7 +177,7 @@ function PrimaryAppBar(props) {
       <MenuItem key="darkMode">
             <Switch
               checked={darkModeOn}
-              color="textSecondary"
+              color="secondary"
               onChange={handleThemeChange}
               name="theme"
               icon={<Brightness4Icon />}
@@ -235,14 +220,6 @@ function PrimaryAppBar(props) {
                   color="inherit">
                   <PeopleIcon />
                 </IconButton>
-
-                <IconButton 
-                  aria-label="Head to chat"
-                  component={RouterLink} 
-                  to="/chat"
-                  color="inherit">
-                  <ChatIcon />
-                </IconButton>
               </React.Fragment>
             }
 
@@ -265,7 +242,7 @@ function PrimaryAppBar(props) {
                   aria-haspopup="true"
                   onClick={handleProfileMenuOpen}
                   color="inherit">
-                  <Avatar src={currentUser.user._links.avatar} 
+                  <Avatar src={currentUser.user.avatar} 
                     className={classes.Avatar}
                     alt={currentUser.user.username}> {currentUser.user.username[0]} 
                   </Avatar>
