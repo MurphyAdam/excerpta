@@ -51,7 +51,7 @@ const SignIn = (props) => {
   const { currentUser, isAuthenticated, login } = {...props};
   const history = useHistory();
   const classes = useStyles();
-  const [emailOrUsername, setEmailOrUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -65,12 +65,12 @@ const SignIn = (props) => {
 
   const performLogin = e => {
     e.preventDefault();
-    login({emailOrUsername, password, rememberMe});
+    login({email, password, rememberMe});
   };
 
   const handleSwithButtonChange = e => setRememberMe(e.target.checked);
 
-  const isEnabledToSubmit = emailOrUsername.length >= 4 && password.length >= 8;
+  const isEnabledToSubmit = email.length >= 4 && password.length >= 8;
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -90,11 +90,11 @@ const SignIn = (props) => {
                   margin="normal"
                   required
                   fullWidth
-                  id="emailOrUsername"
-                  label="Email or Username"
-                  name="emailOrUsername"
-                  value={emailOrUsername}
-                  onChange={({ target: { value } }) => setEmailOrUsername(value)}
+                  id="email"
+                  label="Email"
+                  name="email"
+                  value={email}
+                  onChange={({ target: { value } }) => setEmail(value)}
                   autoComplete="email"
                   autoFocus
                 />
