@@ -1,15 +1,23 @@
 import React from 'react';
+
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
 
+import useWindowDimensions from '../../hooks/useWindowDimensions';
+
+
 const TabContainer = (props) => {
   const { snippet, tab, index, updateSnippet, saveSnippet } = props;
+  const { height, width } = useWindowDimensions();
+
+  // whats the 10% of window.innerWidth ?
+  // solution: 10 / 100 * window.innerWidth
 
   const editorDimensions = {
-    width: (window.screen.availWidth - (window.screen.availWidth / 5)),
-    height: window.screen.availHeight - (window.screen.availHeight / 3),
+    width: (83/100) * width,
+    height: (70/100) * height,
   }
 
   return (
@@ -18,14 +26,15 @@ const TabContainer = (props) => {
         <AceEditor
           mode="javascript"
           fontSize={14}
-          width={editorDimensions.width}
-          height={editorDimensions.height}
+          width={`${Number(editorDimensions.width).toString()}px`}
+          height={`${Number(editorDimensions.height).toString()}px`}
           value={snippet.code}
           theme="monokai"
           onChange={code => updateSnippet({code, id: snippet.id, edited: true})}
           name="UNIQUE_ID_OF_DIV"
           editorProps={{ $blockScrolling: true }}
           setOptions={{
+            useWorker: false,
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,
             enableSnippets: true
