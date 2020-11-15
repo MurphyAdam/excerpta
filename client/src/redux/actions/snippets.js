@@ -2,18 +2,17 @@ import {
 	FETCH_SNIPPET,
 	FETCH_SNIPPET_SUCCESS,
 	FETCH_SNIPPET_FAILURE,
-	REFETCH_SNIPPET,
-	REFETCH_SNIPPET_SUCCESS,
-	REFETCH_SNIPPET_FAILURE,
 	DELETE_SNIPPET,
 	DELETE_SNIPPET_SUCCESS,
 	DELETE_SNIPPET_FAILURE,
 	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
+	SAVE_SNIPPET,
+	SAVE_SNIPPET_SUCCESS,
 } from '../constants/snippets';
 import { error as notificationError } from 'react-notification-system-redux';
-import { fetchSnippetsService, fetchSnippetService, 
-	deleteSnippetService } from '../../services/snippets-api';
+import { fetchSnippetsService, 
+	deleteSnippetService, updateSnippetService } from '../../services/snippets-api';
 
 const ActionCreatorFactory = (type, payload=null) => {
 	return {
@@ -58,38 +57,48 @@ export function updateSnippet(snippet) {
 	}
 }
 
+const saveSnippetAction = data => ActionCreatorFactory(SAVE_SNIPPET, data);
+const saveSnippetSuccess = data => ActionCreatorFactory(SAVE_SNIPPET_SUCCESS, data);
+
+export function saveSnippet(snippetData, remote=false) {
+	return (dispatch, getState) => {
+		dispatch(saveSnippetAction(snippetData));
+		let snippet = getState().snippets.snippets.find( snippet => snippet.id === snippetData.id );
+		if(snippet){
+			snippet = {...snippet, state: ''};
+		}
+		else return;
+		if(!remote) {
+			localStorage.setItem(`${snippet.id}#${snippet.title}`, JSON.stringify(snippet));
+		}
+		else {
+			updateSnippetService(snippet)
+			.then((response) => {
+				if (response.status !== 200) {
+					dispatch(fetchSnippetsError(response));
+				}
+				return response;
+			})
+			.then((response) => {
+				dispatch(saveSnippetSuccess(response.data))
+			})
+			.catch((error) => {
+				console.log(error.response)
+				dispatch(updateSnippet({...snippet, state: '[remote saving failed]'}))
+				dispatch(notificationError({'title': error.response.data.message || 
+					error.request.statusText,
+					'message': `Failed to save snippet to server`,
+				}));
+			})
+		}
+	}
+}
+
 const addSnippetAction = data => ActionCreatorFactory(CREATE_SNIPPET, data);
 
 export function addSnippet(snippet) {
 	return (dispatch) => {
 		dispatch(addSnippetAction(snippet));
-	}
-}
-
-const refetchSnippets = page => ActionCreatorFactory(REFETCH_SNIPPET);
-const refetchSnippetsSuccess = data => ActionCreatorFactory(REFETCH_SNIPPET_SUCCESS, data);
-const refetchSnippetsError = error => ActionCreatorFactory(REFETCH_SNIPPET_FAILURE, error);
-
-export const refetchSnippet = id => {
-	return (dispatch) => {
-		dispatch(refetchSnippets());
-		fetchSnippetService(id)
-		.then((response) => {
-			if (response.status !== 200) {
-				dispatch(refetchSnippetsError(response));
-			}
-			return response;
-		})
-		.then((response) => {
-			dispatch(refetchSnippetsSuccess(response.data));
-		})
-		.catch((error) => {
-			dispatch(refetchSnippetsError(error));
-			dispatch(notificationError({'title': error.response.data.message || 
-				error.request.statusText,
-				'message': `Failed to refetch snippet`,
-			}));
-		})
 	}
 }
 
