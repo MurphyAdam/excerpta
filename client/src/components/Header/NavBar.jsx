@@ -211,17 +211,13 @@ function PrimaryAppBar(props) {
               to="/">
               Home
             </Button>
-            {isAuthenticated &&
-              <React.Fragment>
-                <IconButton 
-                  aria-label="show users" 
-                  component={RouterLink} 
-                  to="/users" 
-                  color="inherit">
-                  <PeopleIcon />
-                </IconButton>
-              </React.Fragment>
-            }
+
+            <Button component={RouterLink} 
+              color="inherit" 
+              className={classes.AppBarButton} 
+              to="/snippets">
+              Snippets
+            </Button>
 
             <Switch
               checked={darkModeOn}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core';
-import { getSnippets, updateSnippet } from '../redux/actions/snippets';
+import { getSnippets, updateSnippet, saveSnippet } from '../redux/actions/snippets';
 import { connect } from 'react-redux';
 
 import Menu from '@material-ui/core/Menu';
@@ -21,24 +21,32 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     marginTop: theme.spacing(0.7),
   },
+  barElements: {
+    marginRight: theme.spacing(2)
+  }
 }));
 
 function SnippetManager (props){
-  const { isAuthenticated, snippets, loadSnippets, updateSnippet } = {...props}
+  const { isAuthenticated, snippets, loadSnippets, updateSnippet, saveSnippet } = props;
   const classes = useStyles();
+
+  // Tabs state and actions
   const [currentTabId, setCurrentTabId] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const [tab, setTab] = useState(0)
   const [openCreateNew, setOpenCreateNew] = useState(false);
-  
-  const handleClick = (event) => setAnchorEl(event.currentTarget);
-
-  const handleClose = () => setAnchorEl(null);
-
   const handleTabChange = (event, value) => setTab(value);
 
-  const saveSnippet = id => updateSnippet({id, edited: false});
+  // File Menu Anchor, state and actions
+  const [fileMenuAnchorEl, setFileMenuAnchorEl] = useState(null);
+  const fileMenuopen = Boolean(fileMenuAnchorEl);
+  const handleFileMenuClick = (event) => setFileMenuAnchorEl(event.currentTarget);
+  const handleFileMenuClose = () => setFileMenuAnchorEl(null);
+
+  // Preferences Menu Anchor, state and actions
+  const [preferencesMenuAnchorEl, setPreferencesMenuAnchorEl] = useState(null);
+  const preferencesMenuopen = Boolean(preferencesMenuAnchorEl);
+  const handlePreferencesMenuClick = (event) => setPreferencesMenuAnchorEl(event.currentTarget);
+  const handlePreferencesMenuClose = () => setPreferencesMenuAnchorEl(null);
 
   useEffect(
     () => {
@@ -58,36 +66,79 @@ function SnippetManager (props){
           aria-label="File"
           aria-controls="long-menu"
           aria-haspopup="true"
-          onClick={handleClick}
+          onClick={handleFileMenuClick}
+          className={classes.barElements}
         >
           File
         </Typography>
-          <Menu
-            id="long-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              style: {
-                maxHeight: 48 * 4.5,
-                width: '20ch',
-              },
-            }}
-          >
-            <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
-              New
-            </MenuItem>
-            <MenuItem key="save" onClick={() => saveSnippet(currentTabId)}>
-              Save
-            </MenuItem>
-            <MenuItem>
-              Close
-            </MenuItem>
-            <MenuItem>
-              Delete
-            </MenuItem>
-          </Menu>
+        <Menu
+          id="long-menu"
+          anchorEl={fileMenuAnchorEl}
+          keepMounted
+          open={fileMenuopen}
+          onClose={handleFileMenuClose}
+          PaperProps={{
+            style: {
+              maxHeight: 48 * 4.5,
+              width: '20ch',
+            },
+          }}
+        >
+          <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
+            New
+          </MenuItem>
+          <MenuItem key="saveLocally" 
+            onClick={() => saveSnippet({id: currentTabId ,state: ''}) }>
+            Save to local
+          </MenuItem>
+          <MenuItem key="saveRemotely" 
+            onClick={() => saveSnippet({id: currentTabId ,state: '[saving...]'}, true) }>
+            Save to remote
+          </MenuItem>
+          <MenuItem>
+            Close
+          </MenuItem>
+          <MenuItem>
+            Delete
+          </MenuItem>
+        </Menu>
+        <Typography
+          aria-label="File"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          onClick={handlePreferencesMenuClick}
+          className={classes.barElements}
+        >
+          Preferences
+        </Typography>
+        <Menu
+          id="long-menu"
+          anchorEl={preferencesMenuAnchorEl}
+          keepMounted
+          open={preferencesMenuopen}
+          onClose={handlePreferencesMenuClose}
+          PaperProps={{
+            style: {
+              maxHeight: 48 * 4.5,
+              width: '20ch',
+            },
+          }}
+        >
+          <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
+            Theme
+          </MenuItem>
+          <MenuItem key="saveLocally" 
+            onClick={() => saveSnippet({id: currentTabId ,state: ''}) }>
+            Mode
+          </MenuItem>
+          <MenuItem key="saveRemotely" 
+            onClick={() => saveSnippet({id: currentTabId ,state: '[saving...]'}, true) }>
+            Font
+          </MenuItem>
+          <MenuItem>
+            Close
+          </MenuItem>
+        </Menu>
       </div>
       <Divider className={classes.divider} />
       <AntTabs
@@ -101,7 +152,7 @@ function SnippetManager (props){
           snippets.snippets.map(snippet => (
             <AntTab key={snippet.id}
               onClick={() => setCurrentTabId(snippet.id)}
-              label={`${snippet.edited ? snippet.title + '*' : snippet.title}`} >
+              label={`${snippet.title} ${snippet.state}`} >
             </AntTab>
           )) 
         }
@@ -142,6 +193,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     loadSnippets: () => dispatch(getSnippets()),
     updateSnippet: data => dispatch(updateSnippet(data)),
+    saveSnippet: (data, remote) => dispatch(saveSnippet(data, remote)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SnippetManager);
