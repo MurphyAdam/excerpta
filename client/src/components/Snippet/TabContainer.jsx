@@ -20,6 +20,19 @@ const TabContainer = (props) => {
     height: (70/100) * height,
   }
 
+  const commands = [
+    {   // commands is array of key bindings.
+      name: 'Save snippet locally', //name for the key binding.
+      bindKey: {win: 'Ctrl-s', mac: 'Command-s'}, //key combination used for the command.
+      exec: () => saveSnippet({id: snippet.id ,state: ''})  //function to execute when keys are pressed.
+    },
+    {
+      name: 'Save snippet to server', 
+      bindKey: {win: 'Ctrl-Alt-s', mac: 'Command-Alt-s'}, 
+      exec: () => saveSnippet({id: snippet.id ,state: '[saving...]'}, true) 
+    }
+  ];
+
   return (
     <React.Fragment>
       {tab === index && (
@@ -30,7 +43,7 @@ const TabContainer = (props) => {
           height={`${Number(editorDimensions.height).toString()}px`}
           value={snippet.code}
           theme="monokai"
-          onChange={code => updateSnippet({code, id: snippet.id, edited: true})}
+          onChange={code => updateSnippet({code, id: snippet.id, state: '*'})}
           name="UNIQUE_ID_OF_DIV"
           editorProps={{ $blockScrolling: true }}
           setOptions={{
@@ -39,11 +52,7 @@ const TabContainer = (props) => {
             enableLiveAutocompletion: true,
             enableSnippets: true
           }}
-          commands={[{   // commands is array of key bindings.
-            name: 'Save snippet', //name for the key binding.
-            bindKey: {win: 'Ctrl-s', mac: 'Command-s'}, //key combination used for the command.
-            exec: () => saveSnippet(snippet.id)  //function to execute when keys are pressed.
-          }]}
+          commands={commands}
         />
         )}
     </React.Fragment>
