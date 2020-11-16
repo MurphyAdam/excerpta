@@ -18,8 +18,11 @@ from django.urls import path, include, re_path
 from frontend import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('snippets.urls')),
-    path('auth/', include('rest_framework.urls')),
+    path('api/admin/', admin.site.urls),
+    path('api/', include('snippets.urls')),
+    path('api/', include('users.urls')),
+    path('api/auth/', include('rest_auth.urls')),
+    path('api/auth/registration/', include('rest_auth.registration.urls')),
+    path('api/security/', include('security.urls')),
     re_path(r'^', views.FrontendAppView.as_view()),
 ]
