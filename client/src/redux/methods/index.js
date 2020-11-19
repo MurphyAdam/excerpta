@@ -2,6 +2,13 @@ import React from "react";
 // react must be in scope for notificationTemplate's renderArray method
 // which includes jsx
 
+export const ActionCreatorFactory = (type, payload=null) => {
+	return {
+		type: type,
+		payload: payload
+	}
+}
+
 export function updateItemInArray(array, newItem) {
     let items = array.filter(item => item.id !== newItem.id );
     items = [...items, newItem].sort( (a, b) => a.id-b.id);
