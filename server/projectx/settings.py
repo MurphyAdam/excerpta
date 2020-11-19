@@ -1,4 +1,8 @@
 import os
+#import django_heroku
+
+# Activate Django-Heroku.
+#django_heroku.settings(locals())
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ')h)xmc$bcb)mlmm#x6q5t1$3hebjw%9jx1ayk@)b!#s##jr_q_'
@@ -14,17 +18,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'django.contrib.sites',
-
-    'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
-
     'allauth',
     'allauth.account',
-
+    'allauth.socialaccount',
+    'corsheaders',
     'rest_auth',
     'rest_auth.registration',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'snippets',
 
@@ -33,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,7 +141,7 @@ ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
@@ -169,3 +173,4 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 CORS_ALLOW_CREDENTIALS = True
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
