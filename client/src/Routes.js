@@ -2,6 +2,7 @@ import Home from './containers/Home';
 import SnippetManager from './containers/SnippetManager';
 import SignIn from './components/Auth/SignIn';
 import SignUp from './components/Auth/SignUp';
+import About from './containers/About';
 import NotFound from './components/Errors/NotFound';
 
 
@@ -32,6 +33,13 @@ const Routes = [
     path: '/auth/signup',
     name: 'Sign up',
     component: SignUp,
+    needsAuthentication: false,
+    needsAuthorisation: false
+  },
+  {
+    path: '/about',
+    name: 'About Snippets',
+    component: About,
     needsAuthentication: false,
     needsAuthorisation: false
   },
