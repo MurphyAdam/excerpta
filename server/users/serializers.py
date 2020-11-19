@@ -5,12 +5,10 @@ from rest_framework.authtoken.models import Token
 
 from users.models import User
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    snippets = serializers.HyperlinkedIdentityField(many=True, view_name='snippet-detail', read_only=True)
-
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'links', 'snippets')
+        fields = ('id', 'username', 'links')
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -29,7 +27,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def save(self, request):
         adapter = get_adapter()
-        user = adapter.new_user(request)
+        user = adapter.new_user(request, context={'request': request})
         self.cleaned_data = self.get_cleaned_data()
         user.save()
         adapter.save_user(request, user, self)
