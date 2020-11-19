@@ -11,6 +11,11 @@ function DialogWithCallback(props) {
 
 	const { open, onOpen, onClose, title, body, actionName, actionCallback } = props;
  
+	const actionCallbackAndClose = () => {
+		actionCallback();
+		onClose();
+	}
+
 	return (
 		<Dialog open={open} onOpen={onOpen} onClose={onClose} 
 			disableBackdropClick={true}>
@@ -28,7 +33,7 @@ function DialogWithCallback(props) {
 				</Button>
 				<Button color="secondary" 
 					autoFocus="autoFocus" 
-					onClick={() => {actionCallback()}}
+					onClick={actionCallbackAndClose}
 					variant="contained">
 				 {actionName || 'Delete'}
 				</Button>
