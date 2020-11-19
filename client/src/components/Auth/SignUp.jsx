@@ -50,7 +50,8 @@ const SignUp = (props) => {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password1, setPassword1] = useState('');
+  const [password2, setPassword2] = useState('');
 
   const redirect = useCallback((where) => history.push(where)
   , [history]
@@ -61,18 +62,19 @@ const SignUp = (props) => {
     if(userSubject.success){
       setUsername('');
       setEmail('');
-      setPassword('');
+      setPassword1('');
+      setPassword2('');
     }
   }, [isAuthenticated, userSubject, redirect]);
 
   const performSignUp = e => {
     e.preventDefault();
-    signUp({username, email, password});
+    signUp({username, email, password1, password2});
   };
 
   const isEnabledToSubmit = () => {
     if(username.length >= 4 &&
-      email.length && password.length >= 8) return true;
+      email.length && password1.length >= 8 && password1 === password2) return true;
     else return false;
   }
 
@@ -117,20 +119,34 @@ const SignUp = (props) => {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   style={{ margin: 5 }}
                   required
                   fullWidth
-                  name="password"
+                  name="password1"
                   label="Password"
                   type="password"
-                  value={password}
-                  onChange={({ target: { value } }) => setPassword(value)}
-                  id="password"
-                  autoComplete="current-password"
+                  value={password1}
+                  onChange={({ target: { value } }) => setPassword1(value)}
+                  id="password1"
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  style={{ margin: 5 }}
+                  required
+                  fullWidth
+                  name="password2"
+                  label="Password Confirm"
+                  type="password"
+                  value={password2}
+                  onChange={({ target: { value } }) => setPassword2(value)}
+                  id="password2"
                 />
               </Grid>
           </Grid>
