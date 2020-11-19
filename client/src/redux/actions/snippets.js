@@ -1,29 +1,31 @@
 import {
-	FETCH_SNIPPET,
-	FETCH_SNIPPET_SUCCESS,
-	FETCH_SNIPPET_FAILURE,
+	FETCH_SNIPPETS,
+	FETCH_SNIPPETS_SUCCESS,
+	FETCH_SNIPPETS_FAILURE,
 	DELETE_SNIPPET,
-	DELETE_SNIPPET_SUCCESS,
-	DELETE_SNIPPET_FAILURE,
 	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
 	SAVE_SNIPPET,
-	SAVE_SNIPPET_SUCCESS,
+	SAVE_SNIPPET_REMOTE,
+	SET_CURRENT_SNIPPET_META,
 } from '../constants/snippets';
 import { error as notificationError } from 'react-notification-system-redux';
 import { fetchSnippetsService, 
 	deleteSnippetService, updateSnippetService } from '../../services/snippets-api';
+import { ActionCreatorFactory } from '../methods';
 
-const ActionCreatorFactory = (type, payload=null) => {
-	return {
-		type: type,
-		payload: payload
+
+const setCurrentSnippetMetaAction = data => ActionCreatorFactory(SET_CURRENT_SNIPPET_META, data);
+
+export function setCurrentSnippetMeta(snippetMeta) {
+	return (dispatch) => {
+		dispatch(setCurrentSnippetMetaAction(snippetMeta));
 	}
 }
 
-const fetchSnippets = page => ActionCreatorFactory(FETCH_SNIPPET);
-const fetchSnippetsSuccess = data => ActionCreatorFactory(FETCH_SNIPPET_SUCCESS, data);
-const fetchSnippetsError = error => ActionCreatorFactory(FETCH_SNIPPET_FAILURE, error);
+const fetchSnippets = page => ActionCreatorFactory(FETCH_SNIPPETS);
+const fetchSnippetsSuccess = data => ActionCreatorFactory(FETCH_SNIPPETS_SUCCESS, data);
+const fetchSnippetsError = error => ActionCreatorFactory(FETCH_SNIPPETS_FAILURE, error);
 
 export function getSnippets() {
 	return (dispatch) => {
@@ -58,7 +60,7 @@ export function updateSnippet(snippet) {
 }
 
 const saveSnippetAction = data => ActionCreatorFactory(SAVE_SNIPPET, data);
-const saveSnippetSuccess = data => ActionCreatorFactory(SAVE_SNIPPET_SUCCESS, data);
+const saveSnippetRemoteAction = data => ActionCreatorFactory(SAVE_SNIPPET_REMOTE, data);
 
 export function saveSnippet(snippetData, remote=false) {
 	return (dispatch, getState) => {
@@ -69,21 +71,14 @@ export function saveSnippet(snippetData, remote=false) {
 		}
 		else return;
 		if(!remote) {
-			localStorage.setItem(`${snippet.id}#${snippet.title}`, JSON.stringify(snippet));
+			localStorage.setItem(`${snippet.id}#${snippet.name}`, JSON.stringify(snippet));
 		}
 		else {
 			updateSnippetService(snippet)
 			.then((response) => {
-				if (response.status !== 200) {
-					dispatch(fetchSnippetsError(response));
-				}
-				return response;
-			})
-			.then((response) => {
-				dispatch(saveSnippetSuccess(response.data))
+				dispatch(saveSnippetRemoteAction(response.data))
 			})
 			.catch((error) => {
-				console.log(error.response)
 				dispatch(updateSnippet({...snippet, state: '[remote saving failed]'}))
 				dispatch(notificationError({'title': error.response.data.message || 
 					error.request.statusText,
@@ -102,25 +97,15 @@ export function addSnippet(snippet) {
 	}
 }
 
-const removeSnippet = page => ActionCreatorFactory(DELETE_SNIPPET);
-const removeSnippetSuccess = data => ActionCreatorFactory(DELETE_SNIPPET_SUCCESS, data);
-const removeSnippetError = error => ActionCreatorFactory(DELETE_SNIPPET_FAILURE, error);
+const removeSnippetAction = id => ActionCreatorFactory(DELETE_SNIPPET, id);
 
 export const deleteSnippet = id => {
 	return (dispatch) => {
-		dispatch(removeSnippet());
 		deleteSnippetService(id)
 		.then((response) => {
-			if (response.status !== 200) {
-				dispatch(removeSnippetError(response));
-			}
-			return response;
-		})
-		.then((response) => {
-			dispatch(removeSnippetSuccess({snippet: response.data?.snippet, snippet_id: id}));
+			dispatch(removeSnippetAction(id));
 		})
 		.catch((error) => {
-			dispatch(removeSnippetError(error));
 			dispatch(notificationError({'title': error.response.data.message || 
 				error.request.statusText,
 				'message': `Failed to delete snippet`,
