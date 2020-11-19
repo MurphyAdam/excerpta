@@ -18,6 +18,16 @@ const languages = ["ada",
  "perl", "php", "prolog", "python", "rust", "sql", "swift",
 ];
 
+const snippetPlaceHolder = {
+	id: 0,
+	owner: "majdi",
+	name: "HelloWorld.md",
+	code: "",
+	language: "markdown",
+	state: ""
+	}
+
+
 const snippetsDataMock = [ 
 			{
 			    url: "http://127.0.0.1:8000/api/snippets/1/?format=json",
@@ -77,4 +87,4 @@ const snippetsDataMock = [
 			} 
 		]
 
-export { snippetColors, languages, snippets };
+export { snippetColors, languages, snippetsDataMock, snippetPlaceHolder };

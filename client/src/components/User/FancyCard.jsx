@@ -59,7 +59,7 @@ function FancyUserCard(props) {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <div className={classes.avatarContainer}>
-              <Avatar src={user._links.avatar} aria-label={user.username} className={classes.avatar} />
+              <Avatar src={user.links.avatar} aria-label={user.username} className={classes.avatar} />
             </div>
             <Typography component="h4" 
               variant="h4" 

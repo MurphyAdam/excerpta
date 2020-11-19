@@ -19,15 +19,7 @@ import { LOAD_CURRENT_USER,
 import { login, createUser, logoutCurrentUser, fetchCurrentUser } from '../../services/auth-api';
 import { error as notificationError, 
 removeAll as notificationRemoveAll } from 'react-notification-system-redux';
-import { notificationTemplate } from '../methods';
-
-
-const ActionCreatorFactory = (type, payload=null) => {
-	return {
-		type: type,
-		payload: payload
-	}
-}
+import { ActionCreatorFactory, notificationTemplate } from '../methods';
 
 const loadUserRequest = () => ActionCreatorFactory(LOAD_CURRENT_USER);
 const loadUserSuccess = data => ActionCreatorFactory(LOAD_CURRENT_USER_SUCCESS, data);

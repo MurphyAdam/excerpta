@@ -20,12 +20,12 @@ import { notificationTemplate } from '../../redux/methods';
 import { addSnippet } from '../../redux/actions/snippets';
 
 export default function NewSnippet(props) {
-  const { open, onOpen, onClose, setCurrentTabId } = props;
+  const { open, onOpen, onClose, setCurrentSnippetMeta, handleFileMenuClose } = props;
   const dispatch = useDispatch();
   const radioGroupRef = React.useRef(null);
   const [snippet, setSnippet] = useState(
     {
-      title: '', 
+      name: '', 
       language: ''
     });
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,10 @@ export default function NewSnippet(props) {
       // the response returns the created snippet
       // we add it to our snippets
       dispatch(addSnippet(response.data));
-      setCurrentTabId(response.data.id);
+      // we use handleFileMenuClose to close the File Menu
+      // upon a successfully file creation
+      handleFileMenuClose();
+      setCurrentSnippetMeta({id: response.data.id, name: response.data.name});
     } catch (error) {
         // display notification for error
         dispatch(notificationError({'title': error.response.data.message || 
@@ -78,11 +81,11 @@ export default function NewSnippet(props) {
           <TextField
             autoFocus
             margin="dense"
-            id="title"
-            name="title"
+            id="name"
+            name="name"
             label="File name"
             type="text"
-            value={snippet.title}
+            value={snippet.name}
             onChange={handleFieldChange}
             fullWidth
           />

@@ -64,7 +64,7 @@ function CurrentUserCard(props) {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <div className={classes.avatarContainer}>
-              <Avatar src={currentUser._links.avatar} 
+              <Avatar src={currentUser.links.avatar} 
                 aria-label={currentUser.username} 
                 className={classes.avatar} />
             </div>

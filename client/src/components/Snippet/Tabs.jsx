@@ -3,17 +3,17 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-export const AntTabs = withStyles({
+export const AntTabs = withStyles((theme) => ({
   root: {
     minHeight: 'fit-content',
   },
   indicator: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.getContrastText(theme.palette.background.paper),
   },
   scroller: {
     height: 'fit-content',
   },
-})(Tabs);
+}))(Tabs);
 
 export const AntTab = withStyles((theme) => ({
   root: {
@@ -37,15 +37,15 @@ export const AntTab = withStyles((theme) => ({
       '"Segoe UI Symbol"',
     ].join(','),
     '&:hover': {
-      color: '#fff',
+      color: theme.palette.getContrastText(theme.palette.background.paper),
       opacity: 1,
     },
     '&$selected': {
-      color: '#fff',
+      color: theme.palette.getContrastText(theme.palette.background.paper),
       fontWeight: theme.typography.fontWeightMedium,
     },
     '&:focus': {
-      color: '#fff',
+      color: theme.palette.getContrastText(theme.palette.background.paper),
     },
   },
   selected: {},

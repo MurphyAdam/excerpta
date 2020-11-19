@@ -155,7 +155,7 @@ function PrimaryAppBar(props) {
               aria-haspopup="true"
               color="inherit"
               onClick={handleProfileMenuOpen}>
-              <Avatar src={currentUser.user.avatar} 
+              <Avatar src={currentUser.user.links.avatar} 
                 alt={currentUser.user.username}> {currentUser.user.username[0]} 
               </Avatar>
             </IconButton>
@@ -238,7 +238,7 @@ function PrimaryAppBar(props) {
                   aria-haspopup="true"
                   onClick={handleProfileMenuOpen}
                   color="inherit">
-                  <Avatar src={currentUser.user.avatar} 
+                  <Avatar src={currentUser.user.links.avatar} 
                     className={classes.Avatar}
                     alt={currentUser.user.username}> {currentUser.user.username[0]} 
                   </Avatar>

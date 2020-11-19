@@ -47,7 +47,7 @@ export default function UserCard(props) {
         <Card>
           <CardHeader
             avatar={
-              <Avatar src={user._links.avatar} aria-label={user.username} />
+              <Avatar src={user.links.avatar} aria-label={user.username} />
             }
             title={renderProfileLink(user)}
             subheader={`Active ${ moment(user.last_seen).fromNow() } ago`}
