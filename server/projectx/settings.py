@@ -1,10 +1,9 @@
 import os
+import dj_database_url
 import django_heroku
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = ')h)xmc$bcb)mlmm#x6q5t1$3hebjw%9jx1ayk@)b!#s##jr_q_'
 DEBUG = True
 
@@ -70,16 +69,6 @@ WSGI_APPLICATION = 'projectx.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-"""
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -90,6 +79,8 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+DATABASES['default'].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
 
 
 # Password validation
@@ -137,6 +128,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+
 ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
@@ -174,3 +166,6 @@ CORS_ORIGIN_WHITELIST = (
 
 CORS_ALLOW_CREDENTIALS = True
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
