@@ -1,8 +1,8 @@
 import os
-#import django_heroku
+import django_heroku
 
 # Activate Django-Heroku.
-#django_heroku.settings(locals())
+django_heroku.settings(locals())
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ')h)xmc$bcb)mlmm#x6q5t1$3hebjw%9jx1ayk@)b!#s##jr_q_'
