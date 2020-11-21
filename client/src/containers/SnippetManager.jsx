@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core';
 import { getSnippets, updateSnippet, saveSnippet, 
-  deleteSnippet, setCurrentSnippetMeta } from '../redux/actions/snippets';
+  deleteSnippet, setCurrentSnippetMeta, closeSnippet } from '../redux/actions/snippets';
 import { connect } from 'react-redux';
 
 import Menu from '@material-ui/core/Menu';
@@ -21,7 +21,9 @@ import { CircularLoader } from '../components/Common/Loaders';
 
 import DialogWithCallback from '../components/Common/DialogWithCallback';
 import { Link as RouterLink } from 'react-router-dom';
-
+import ChangeTheme from '../components/Snippet/ChangeTheme';
+import ChangeMode from '../components/Snippet/ChangeMode';
+import { updateEditorPreferences } from '../redux/actions/ui';
 
 const useStyles = makeStyles((theme) => ({
   menuList: {
@@ -38,14 +40,14 @@ const useStyles = makeStyles((theme) => ({
 
 function SnippetManager (props){
   const { isAuthenticated, snippets, loadSnippets, updateSnippet, 
-    saveSnippet, deleteSnippet, currentSnippetMeta, setCurrentSnippetMeta } = props;
+    saveSnippet, deleteSnippet, currentSnippetMeta, 
+    setCurrentSnippetMeta, editorPreferences, 
+    updateEditorPreferences, closeSnippet } = props;
   const classes = useStyles();
-  const [editorPreferences, setEditorPreferences] = useState({
-    theme: 'monokai',
-    font: 14,
-  });
 
   // Tabs and snippets CRUD components actions
+  const [openChangeMode, setOpenChangeMode] = useState(false);
+  const [openChangeTheme, setOpenChangeTheme] = useState(false);
   const [openCreateNew, setOpenCreateNew] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const handleTabChange = (event, value) => setCurrentSnippetMeta({tabId: value});
@@ -70,9 +72,9 @@ function SnippetManager (props){
 
   const adjustFontSize = sign => {
     if(sign === '+')
-      setEditorPreferences(editorPreferences => ({...editorPreferences, font: editorPreferences.font + 1}));
+      updateEditorPreferences({font: editorPreferences.font + 1});
     else if(sign === '-') 
-      setEditorPreferences(editorPreferences => ({...editorPreferences, font: editorPreferences.font - 1}));
+      updateEditorPreferences({font: editorPreferences.font - 1});
     return;
   }
 
@@ -124,7 +126,8 @@ function SnippetManager (props){
             onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: '[saving...]'}, true) }>
             Save to remote
           </MenuItem>
-          <MenuItem>
+          <MenuItem key="closeSnippet" 
+            onClick={() => closeSnippet({id: currentSnippetMeta.id , tabId: currentSnippetMeta.tabId , state: 'closed'}) }>
             Close
           </MenuItem>
           <MenuItem key="deleteSnippet" onClick={() => {setOpenDelete(!openDelete)}}>
@@ -154,12 +157,13 @@ function SnippetManager (props){
             },
           }}
         >
-          <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
+          <MenuItem key="Change Theme"
+            onClick={() => {setOpenChangeTheme(!openChangeTheme)}}>
             Theme ({editorPreferences.theme})
           </MenuItem>
-          <MenuItem key="saveLocally" 
-            onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: ''}) }>
-            Mode
+          <MenuItem key="Change Language Mode" 
+            onClick={() => {setOpenChangeMode(!openChangeMode)}}>
+            Mode ({editorPreferences.mode})
           </MenuItem>
           <MenuItem key="saveRemotely">
             Font ({editorPreferences.font}) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -214,26 +218,36 @@ function SnippetManager (props){
         variant="fullWidth"
       >
         {!!snippets.snippets.length &&
-          snippets.snippets.map(snippet => (
-            <AntTab key={snippet.id}
-              onClick={() => setCurrentSnippetMeta({id: snippet.id, name: snippet.name})}
-              label={`${snippet.name} ${snippet.state}`} >
-            </AntTab>
-          )) 
+          snippets.snippets.map(snippet => {
+            if(snippet.state !== 'closed') {
+              return (
+                <AntTab key={snippet.id}
+                  onClick={() => setCurrentSnippetMeta({id: snippet.id, name: snippet.name, mode: snippet.language})}
+                  label={`${snippet.name} ${snippet.state}`} >
+                </AntTab>
+                )
+            }
+            return null;
+          }) 
         }
       </AntTabs>
       {!!snippets.snippets.length &&
-        snippets.snippets.map((snippet, i) => (
-          <TabContainer key={snippet.id}
-            snippet={snippet} 
-            tab={currentSnippetMeta.tabId}
-            index={i} 
-            editorPreferences={editorPreferences}
-            updateSnippet={updateSnippet} 
-            saveSnippet={saveSnippet} 
-            createSnippetStateAction={{openCreateNew, setOpenCreateNew}}
-            deleteSnippetStateAction={{openDelete, setOpenDelete}} />
-        )) 
+        snippets.snippets.map((snippet, i) => {
+          if(snippet.state !== 'closed') {
+            return (
+              <TabContainer key={snippet.id}
+                snippet={snippet} 
+                tab={currentSnippetMeta.tabId}
+                index={i} 
+                editorPreferences={editorPreferences}
+                updateSnippet={updateSnippet} 
+                saveSnippet={saveSnippet} 
+                createSnippetStateAction={{openCreateNew, setOpenCreateNew}}
+                deleteSnippetStateAction={{openDelete, setOpenDelete}} />
+            )
+          }
+          return null;
+        }) 
       }
       {openCreateNew &&
         <NewSnippet 
@@ -244,12 +258,27 @@ function SnippetManager (props){
           handleFileMenuClose={handleFileMenuClose}
         />
       }
+      {openChangeTheme &&
+        <ChangeTheme 
+          open={openChangeTheme}
+          onOpen={() => {setOpenChangeTheme(!openChangeTheme)}}
+          onClose={() => {setOpenChangeTheme(false)}}
+          editorPreferencesStateAction={{editorPreferences, updateEditorPreferences}}
+        />
+      }
+      {openChangeMode &&
+        <ChangeMode 
+          open={openChangeMode}
+          onOpen={() => {setOpenChangeMode(!openChangeMode)}}
+          onClose={() => {setOpenChangeMode(false)}}
+          editorPreferencesStateAction={{editorPreferences, updateEditorPreferences}}
+        />
+      }
       {openDelete &&
         <DialogWithCallback 
           open={openDelete}
-          onOpen={() => {setOpenDelete(!openDelete)}}
           onClose={() => {setOpenDelete(false)}}
-          actionCallback={() => deleteSnippet(currentSnippetMeta.id)}
+          actionCallback={() => deleteSnippet({id: currentSnippetMeta.id , tabId: currentSnippetMeta.tabId})}
           title={`Delete file '${currentSnippetMeta.name}'?`}
           body={`Click delete to permanently delete '${currentSnippetMeta.name}'`}
         />
@@ -269,6 +298,7 @@ const mapStateToProps = (state) => {
   return {
     snippets: state.snippets,
     currentSnippetMeta: state.snippets.currentSnippetMeta,
+    editorPreferences: state.ui.editor,
   };
 };
 
@@ -277,8 +307,10 @@ const mapDispatchToProps = (dispatch) => {
     loadSnippets: () => dispatch(getSnippets()),
     updateSnippet: data => dispatch(updateSnippet(data)),
     saveSnippet: (data, remote) => dispatch(saveSnippet(data, remote)),
-    deleteSnippet: id => dispatch(deleteSnippet(id)),
+    deleteSnippet: snippetMeta => dispatch(deleteSnippet(snippetMeta)),
     setCurrentSnippetMeta: meta => dispatch(setCurrentSnippetMeta(meta)),
+    updateEditorPreferences: props => dispatch(updateEditorPreferences(props)),
+    closeSnippet: snippetMeta => dispatch(closeSnippet(snippetMeta)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SnippetManager);
