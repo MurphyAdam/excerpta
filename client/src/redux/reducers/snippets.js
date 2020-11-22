@@ -2,6 +2,10 @@ import { FETCH_SNIPPETS,
 	FETCH_SNIPPETS_SUCCESS,
 	FETCH_SNIPPETS_FAILURE,
 
+	FETCH_PUBLIC_SNIPPETS,
+	FETCH_PUBLIC_SNIPPETS_SUCCESS,
+	FETCH_PUBLIC_SNIPPETS_FAILURE,
+
 	DELETE_SNIPPET,
 	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
@@ -10,6 +14,7 @@ import { FETCH_SNIPPETS,
 	SET_CURRENT_SNIPPET_META,
 	CLOSE_SNIPPET,
 	 } from '../constants/snippets';
+import { INITIATE_AUTH_CLEANUP } from '../constants/auth';
 import { filterArrayWithId, concatArrayOfObjectsAndSortWithDateAsc, 
 	updateObjectInArrayWithId } from '../methods';
 
@@ -18,10 +23,26 @@ const INITIAL_STATE = {
 		count: 0,
 		isLoading: false,
 		isLoaded: false,
+		privateSnippets: {
+			snippets: [],
+			count: 0,
+			prev: null,
+			next: null,
+			isLoading: false,
+			isLoaded: false,
+		},
 		currentSnippetMeta: {
 			name: null,
 			id: null,
 			tabId: 0,
+		},
+		publicSnippets: {
+			snippets: [],
+			count: 0,
+			prev: null,
+			next: null,
+			isLoading: false,
+			isLoaded: false,
 		}
 };
 
@@ -92,6 +113,35 @@ function snippets(state=INITIAL_STATE, action) {
 					isLoaded: true, 
 				}
 			}
+		case FETCH_PUBLIC_SNIPPETS: {
+			return {...state, 
+					publicSnippets: {
+						...state.publicSnippets,
+						isLoading: true,
+						isLoaded: false, 
+					}
+				}
+			}
+		case FETCH_PUBLIC_SNIPPETS_SUCCESS: {
+			return {...state,
+					publicSnippets: {
+						snippets: concatArrayOfObjectsAndSortWithDateAsc(action.payload.results || 
+							state.publicSnippets.snippets),
+						count: action.payload.count,
+						isLoading: false,
+						isLoaded: true, 
+					}
+				}
+			}
+		case FETCH_PUBLIC_SNIPPETS_FAILURE: {
+			return {...state, 
+					publicSnippets: {
+						...state.publicSnippets,
+						isLoading: false,
+						isLoaded: true, 
+					}
+				}
+			}
 		case DELETE_SNIPPET: {
 			const { id, tabId } = action.payload;
 			const totalTabsCount = state.snippets.length - 1;
@@ -155,6 +205,17 @@ function snippets(state=INITIAL_STATE, action) {
 				currentSnippetMeta: {...state.currentSnippetMeta, ...action.payload},
 			}
 		}
+		case INITIATE_AUTH_CLEANUP: {
+			return {...state,
+				snippets: [],
+				count: 0,
+				isLoading: false,
+				isLoaded: false,
+				currentSnippetMeta: {
+					...INITIAL_STATE.currentSnippetMeta
+				}
+			}
+		}	
 		default:
 			return state;
 	}
