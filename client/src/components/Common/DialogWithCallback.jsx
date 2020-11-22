@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 function DialogWithCallback(props) {
 
-	const { open, onOpen, onClose, title, body, actionName, actionCallback } = props;
+	const { open, onClose, title, body, actionName, actionCallback } = props;
  
 	const actionCallbackAndClose = () => {
 		actionCallback();
@@ -17,7 +17,7 @@ function DialogWithCallback(props) {
 	}
 
 	return (
-		<Dialog open={open} onOpen={onOpen} onClose={onClose} 
+		<Dialog open={open} onClose={onClose} 
 			disableBackdropClick={true}>
 			<DialogTitle>{title}</DialogTitle>
 			<DialogContent>

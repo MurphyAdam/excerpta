@@ -1,10 +1,11 @@
 import React from 'react';
 import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/theme-monokai";
-
+import { languages, themes } from '../../constants';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
+import "ace-builds/src-noconflict/ext-language_tools";
+
+themes.forEach(theme => import(`ace-builds/src-noconflict/theme-${theme}`));
+languages.forEach(mode => import(`ace-builds/src-noconflict/mode-${mode}`));
 
 const TabContainer = (props) => {
   const { snippet, tab, index, editorPreferences, 
@@ -12,7 +13,6 @@ const TabContainer = (props) => {
   const { height, width } = useWindowDimensions();
   const { openCreateNew, setOpenCreateNew } = createSnippetStateAction;
   const { openDelete, setOpenDelete } = deleteSnippetStateAction;
-
 
   // whats the 10% of window.innerWidth ?
   // solution: 10 / 100 * window.innerWidth
@@ -53,7 +53,7 @@ const TabContainer = (props) => {
     <React.Fragment>
       {tab === index && (
         <AceEditor
-          mode={snippet.language}
+          mode={editorPreferences.mode}
           fontSize={editorPreferences.font}
           width={`${Number(editorDimensions.width).toString()}px`}
           height={`${Number(editorDimensions.height).toString()}px`}

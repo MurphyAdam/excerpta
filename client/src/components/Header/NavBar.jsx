@@ -200,7 +200,7 @@ function PrimaryAppBar(props) {
                 variant="text"
                 className={classes.title}
                 to="/">
-                  Snippets
+                  Excerpta
               </Button>
           </Typography>
           <div className={classes.grow} />
