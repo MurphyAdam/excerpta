@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { error as notificationError } from 'react-notification-system-redux';
 import { notificationTemplate } from '../../redux/methods';
 import { addSnippet } from '../../redux/actions/snippets';
+import Checkbox from '@material-ui/core/Checkbox';
 
 export default function NewSnippet(props) {
   const { open, onOpen, onClose, setCurrentSnippetMeta, handleFileMenuClose } = props;
@@ -26,7 +27,8 @@ export default function NewSnippet(props) {
   const [snippet, setSnippet] = useState(
     {
       name: '', 
-      language: ''
+      language: '',
+      private: false,
     });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,7 +47,8 @@ export default function NewSnippet(props) {
       // we use handleFileMenuClose to close the File Menu
       // upon a successfully file creation
       handleFileMenuClose();
-      setCurrentSnippetMeta({id: response.data.id, name: response.data.name});
+      const data = response.data;
+      setCurrentSnippetMeta({id: data.id, name: data.name, mode: data.language});
     } catch (error) {
         // display notification for error
         dispatch(notificationError({'title': error.response.data.message || 
@@ -64,11 +67,14 @@ export default function NewSnippet(props) {
   }
 
   const handleChange = (event) => {
-    setSnippet({...snippet, language: event.target.value});
+    const { name, value, checked } = event.target;
+    setSnippet({...snippet, [name]: value || checked});
   };
 
   return (
-      <Dialog fullScreen={true} 
+      <Dialog 
+        fullWidth={true}
+        maxWidth="sm"
         open={open} 
         onOpen={onOpen} 
         onClose={onClose} 
@@ -88,6 +94,16 @@ export default function NewSnippet(props) {
             value={snippet.name}
             onChange={handleFieldChange}
             fullWidth
+          />
+          <DialogContentText>
+            Private
+          </DialogContentText>
+          <Checkbox
+            checked={snippet.private}
+            onChange={handleChange}
+            name="private"
+            id="private"
+            inputProps={{ 'aria-label': 'Private snippet' }}
           />
           <DialogContentText>
             Language
