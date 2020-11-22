@@ -1,1 +1,3 @@
 export const SET_APP_THEME = 'SET_APP_THEME';
+export const UPDATE_EDITOR_PREFS = 'UPDATE_EDITOR_PREFS';
+
