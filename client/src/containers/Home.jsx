@@ -11,7 +11,9 @@ const Home = (props) => {
     <React.Fragment>
       {!isAuthenticated
         ?
-        <About />
+        <React.Fragment>
+          <About />
+        </React.Fragment>
         :
         <SnippetManager currentUser={currentUser}
           isAuthenticated={isAuthenticated} />

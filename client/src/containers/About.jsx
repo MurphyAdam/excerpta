@@ -48,14 +48,13 @@ const About = (props) => {
                   variant="h5" 
                   gutterBottom
                 >
-                  Snippets: A Simple Code Snippets Manager
+                  Excerpta: A Simple Code Snippets Manager
                 </Typography>
                 <Typography 
                   variant="subtitle2" 
                   color="textSecondary"
                   paragraph>
-                  Minimalistic code snippets management app built with React + Material-UI, and served with Flask. Star, 
-                  fork or contribute if you wish so. 
+                  Minimalistic code snippets management app built with React + Material-UI, Django and DRF.
                   <a href="https://github.com/MurphyAdam" 
                     target="_blank"
                     rel="noopener noreferrer" 
