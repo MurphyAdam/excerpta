@@ -55,7 +55,7 @@ function App(props) {
 
   useEffect(() => {
     if(!isAuthenticated) loadUser();
-    else changeDocumentTitle("Snippets: A Simple Code Snippets Manager")
+    else changeDocumentTitle("Excerpta: A Simple Code Snippets Manager")
     // eslint-disable-next-line
   }, [isAuthenticated]);
 

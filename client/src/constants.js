@@ -1,5 +1,5 @@
 
-const languages2 = [
+const languages = [
   "javascript",
   "java",
   "python",
@@ -40,4 +40,4 @@ const snippetPlaceHolder = {
 	state: ""
 	}
 
-export { snippetPlaceHolder, languages2, themes };
+export { snippetPlaceHolder, languages, themes };
