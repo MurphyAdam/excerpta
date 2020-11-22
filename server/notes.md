@@ -1,5 +1,7 @@
 #Bugs 
 
+## fixed
+
 Bugs I ran into and their fixes:
 
 1 bug:
@@ -9,6 +11,10 @@ AssertionError: `HyperlinkedIdentityField` requires the request in the serialize
 
 if you keep getting a HyperlinkedRelatedField needs a request context even after changing your serializers to be using ModelSerializer and PrimaryKeyRelatedField (your UserSerializer), check if the fiedls list of your meta class has a 'url' property, if so, remove it. 
 
+
+## unfixed
+
+Refused to execute script from 'http://localhost:3000/worker-css.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.
 
 #Notes
 
