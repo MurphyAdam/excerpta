@@ -2,15 +2,21 @@ import {
 	FETCH_SNIPPETS,
 	FETCH_SNIPPETS_SUCCESS,
 	FETCH_SNIPPETS_FAILURE,
+
+	FETCH_PUBLIC_SNIPPETS,
+	FETCH_PUBLIC_SNIPPETS_SUCCESS,
+	FETCH_PUBLIC_SNIPPETS_FAILURE,
+
 	DELETE_SNIPPET,
 	CREATE_SNIPPET,
 	UPDATE_SNIPPET,
 	SAVE_SNIPPET,
 	SAVE_SNIPPET_REMOTE,
 	SET_CURRENT_SNIPPET_META,
+	CLOSE_SNIPPET,
 } from '../constants/snippets';
 import { error as notificationError } from 'react-notification-system-redux';
-import { fetchSnippetsService, 
+import { fetchSnippetsService, fetchPublicSnippetsService,
 	deleteSnippetService, updateSnippetService } from '../../services/snippets-api';
 import { ActionCreatorFactory } from '../methods';
 
@@ -51,11 +57,48 @@ export function getSnippets() {
 	};
 }
 
+const fetchPublicSnippets = page => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS);
+const fetchPublicSnippetsSuccess = data => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS_SUCCESS, data);
+const fetchPublicSnippetsError = error => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS_FAILURE, error);
+
+export function getPublicSnippets() {
+	return (dispatch) => {
+		dispatch(fetchPublicSnippets());
+		fetchPublicSnippetsService()
+		.then((response) => {
+			if (response.status !== 200) {
+				dispatch(fetchPublicSnippetsError(response));
+			}
+			return response;
+		})
+		.then((response) => {
+			dispatch(fetchPublicSnippetsSuccess(response.data))
+		})
+		.catch((error) => {
+			console.log("error =>", error)
+			dispatch(fetchPublicSnippetsError(error));
+			dispatch(notificationError({'title': error.response.data.message || 
+				error.request.statusText,
+				'message': `Failed to load public snippets`,
+			}));
+		})
+	};
+}
+
+
 const updateSnippetAction = data => ActionCreatorFactory(UPDATE_SNIPPET, data);
 
 export function updateSnippet(snippet) {
 	return (dispatch) => {
 		dispatch(updateSnippetAction(snippet));
+	}
+}
+
+const closeSnippetAction = data => ActionCreatorFactory(CLOSE_SNIPPET, data);
+
+export function closeSnippet(snippetMeta) {
+	return (dispatch) => {
+		dispatch(closeSnippetAction(snippetMeta));
 	}
 }
 
@@ -97,13 +140,13 @@ export function addSnippet(snippet) {
 	}
 }
 
-const removeSnippetAction = id => ActionCreatorFactory(DELETE_SNIPPET, id);
+const removeSnippetAction = snippetMeta => ActionCreatorFactory(DELETE_SNIPPET, snippetMeta);
 
-export const deleteSnippet = id => {
+export const deleteSnippet = snippetMeta => {
 	return (dispatch) => {
-		deleteSnippetService(id)
+		deleteSnippetService(snippetMeta.id)
 		.then((response) => {
-			dispatch(removeSnippetAction(id));
+			dispatch(removeSnippetAction(snippetMeta));
 		})
 		.catch((error) => {
 			dispatch(notificationError({'title': error.response.data.message || 
