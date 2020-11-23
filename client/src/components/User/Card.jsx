@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import { Card, 
   CardHeader, 
   CardContent, 
@@ -9,6 +8,7 @@ import { Card,
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { truncate } from '../../util/methods';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -50,7 +50,7 @@ export default function UserCard(props) {
               <Avatar src={user.links.avatar} aria-label={user.username} />
             }
             title={renderProfileLink(user)}
-            subheader={`Active ${ moment(user.last_seen).fromNow() } ago`}
+            subheader={`Active ${ formatDistanceToNow(new Date (Date.parse(user.last_seen))) } ago`}
           />
           <CardContent>
             {user.about_me

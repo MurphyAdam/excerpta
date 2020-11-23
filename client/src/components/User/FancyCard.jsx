@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import PeopleIcon from '@material-ui/icons/People';
 import TodayIcon from '@material-ui/icons/Today';
@@ -13,6 +12,7 @@ import FollowActionButton from './FollowActionButton';
 import RoomActionButton from './RoomActionButton';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow' 
 
 const useStyles = makeStyles((theme) => ({
   breadcrumb: {
@@ -80,7 +80,7 @@ function FancyUserCard(props) {
               <Typography variant="subtitle2" 
                 color="inherit" 
                 noWrap>
-                Active { moment(user.last_seen).fromNow() } ago
+                  Active { formatDistanceToNow(new Date (Date.parse(currentUser.last_seen))) } ago
                 <TodayIcon className={classes.icon} />
               </Typography>
             </Breadcrumbs>

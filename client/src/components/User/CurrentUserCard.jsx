@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,7 +12,8 @@ import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import { BackButton } from '../Common/BackButton';
 import PropTypes from 'prop-types';
- 
+import formatDistanceToNow from 'date-fns/formatDistanceToNow' 
+
 const useStyles = makeStyles((theme) => ({
   breadcrumb: {
     display: 'flex',
@@ -87,7 +87,7 @@ function CurrentUserCard(props) {
               <Typography variant="subtitle2" 
                 color="inherit" 
                 noWrap>
-                Active { moment(currentUser.last_seen).fromNow() } ago
+                  Active { formatDistanceToNow(new Date (Date.parse(currentUser.last_seen))) } ago
                 <TodayIcon className={classes.icon} />
               </Typography>
             </Breadcrumbs>
