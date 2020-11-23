@@ -4,8 +4,25 @@ import { languages, themes } from '../../constants';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import "ace-builds/src-noconflict/ext-language_tools";
 
-themes.forEach(theme => import(`ace-builds/src-noconflict/theme-${theme}`));
-languages.forEach(mode => import(`ace-builds/src-noconflict/mode-${mode}`));
+import { config } from 'ace-builds';
+
+// the technique we use below significantly reduces our build bundle size
+// using any other way may cause unrelated modules to be part of the production build
+// in my case over 430 files including their .maps, the technique below reduced that into
+// 7 files including their .map, and in addition, it loads the required modules from a fast 
+// CDN 
+
+languages.forEach(mode => {
+config.setModuleUrl(
+   `ace/mode/${mode}`,
+   `https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/mode-${mode}.js`
+);});
+
+themes.forEach(theme => {
+config.setModuleUrl(
+   `ace/theme/${theme}`,
+   `https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/theme-${theme}.js`
+);});
 
 const TabContainer = (props) => {
   const { snippet, tab, index, editorPreferences, 
