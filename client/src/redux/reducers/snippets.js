@@ -143,7 +143,7 @@ function snippets(state=INITIAL_STATE, action) {
 				}
 			}
 		case DELETE_SNIPPET: {
-			const { id, tabId } = action.payload;
+			const { id } = action.payload;
 			const totalTabsCount = state.snippets.length - 1;
 			const currentSnippetIndex = state.snippets.findIndex(
 			(s) => s.id === id
@@ -170,10 +170,7 @@ function snippets(state=INITIAL_STATE, action) {
 				}
 			}
 			const contextSnippet = state.snippets[directionIndex];
-			console.log('tabId, currentSnippetIndex, directionIndex, nextSnippetIndex, prevSnippetIndex')
-			console.log(tabId, currentSnippetIndex, directionIndex, nextSnippetIndex, prevSnippetIndex)
 			directionIndex = directionIndex - 1 === - 1 ? 0 : directionIndex - 1;
-			console.log('directionIndex', directionIndex)
 			return {...state,
 					snippets: filterArrayWithId(state.snippets, id),
 					count: state.count -1,

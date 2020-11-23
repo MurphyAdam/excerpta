@@ -47,7 +47,6 @@ export function getSnippets() {
 			dispatch(fetchSnippetsSuccess(response.data))
 		})
 		.catch((error) => {
-			console.log("error =>", error)
 			dispatch(fetchSnippetsError(error));
 			dispatch(notificationError({'title': error.response.data.message || 
 				error.request.statusText,
@@ -75,7 +74,6 @@ export function getPublicSnippets() {
 			dispatch(fetchPublicSnippetsSuccess(response.data))
 		})
 		.catch((error) => {
-			console.log("error =>", error)
 			dispatch(fetchPublicSnippetsError(error));
 			dispatch(notificationError({'title': error.response.data.message || 
 				error.request.statusText,
