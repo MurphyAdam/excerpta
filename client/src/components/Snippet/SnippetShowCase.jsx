@@ -17,11 +17,21 @@ import LockIcon from '@material-ui/icons/Lock';
 import AceEditor from "react-ace";
 import { languages, themes } from '../../constants';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-themes.forEach(theme => import(`ace-builds/src-noconflict/theme-${theme}`));
-languages.forEach(mode => import(`ace-builds/src-noconflict/mode-${mode}`));
+import { config } from 'ace-builds';
 
-console.log(themes, languages)
+languages.forEach(mode => {
+config.setModuleUrl(
+   `ace/mode/${mode}`,
+   `https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/mode-${mode}.js`
+);});
+
+themes.forEach(theme => {
+config.setModuleUrl(
+   `ace/theme/${theme}`,
+   `https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/theme-${theme}.js`
+);});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,7 +100,7 @@ export default function SnippetShowCase(props) {
           <Typography variant="subtitle2" 
             color="inherit" 
             noWrap>
-            Date created: {currentSnippet.created}
+            Date created: {formatDistanceToNow(new Date (Date.parse(currentSnippet.created)))} ago
           </Typography>
           {!!currentSnippet.private 
             ? 
