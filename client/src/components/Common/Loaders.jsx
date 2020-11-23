@@ -19,7 +19,7 @@ export function CircularLoader(props) {
   return (
     <Typography 
       align={props.align || "center"} 
-      className={classes.root}>
+      className={classes.root} component="div">
       <CircularProgress color="secondary" size={30} thickness={5} disableShrink/>
     </Typography>
   );
