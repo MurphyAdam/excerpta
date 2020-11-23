@@ -24,6 +24,10 @@ import { Link as RouterLink } from 'react-router-dom';
 import ChangeTheme from '../components/Snippet/ChangeTheme';
 import ChangeMode from '../components/Snippet/ChangeMode';
 import { updateEditorPreferences } from '../redux/actions/ui';
+import FileDownloader from "js-file-download";
+
+import { error as notificationError } from 'react-notification-system-redux';
+import { notificationTemplate } from '../redux/methods';
 
 const useStyles = makeStyles((theme) => ({
   menuList: {
@@ -42,7 +46,7 @@ function SnippetManager (props){
   const { isAuthenticated, snippets, loadSnippets, updateSnippet, 
     saveSnippet, deleteSnippet, currentSnippetMeta, 
     setCurrentSnippetMeta, editorPreferences, 
-    updateEditorPreferences, closeSnippet } = props;
+    updateEditorPreferences, closeSnippet, addNotification } = props;
   const classes = useStyles();
 
   // Tabs and snippets CRUD components actions
@@ -76,6 +80,17 @@ function SnippetManager (props){
     else if(sign === '-') 
       updateEditorPreferences({font: editorPreferences.font - 1});
     return;
+  }
+
+  const downloadSnippet = id => {
+    const snippet = snippets.snippets.find(snippet => snippet.id === id);
+    if(snippet) {
+      FileDownloader(snippet.code, snippet.name)
+    }
+    else {
+      addNotification({...notificationTemplate, 
+        'title': 'Could not download snippet.'}, notificationError);
+    }
   }
 
   useEffect(
@@ -116,7 +131,7 @@ function SnippetManager (props){
           }}
         >
           <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
-            New
+            New File
           </MenuItem>
           <MenuItem key="saveLocally" 
             onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: ''}) }>
@@ -124,14 +139,17 @@ function SnippetManager (props){
           </MenuItem>
           <MenuItem key="saveRemotely" 
             onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: '[saving...]'}, true) }>
-            Save to remote
+            Save to server
+          </MenuItem>
+          <MenuItem key="downloadSnippet" onClick={() => downloadSnippet(currentSnippetMeta.id)}>
+            Download File
           </MenuItem>
           <MenuItem key="closeSnippet" 
             onClick={() => closeSnippet({id: currentSnippetMeta.id , tabId: currentSnippetMeta.tabId , state: 'closed'}) }>
-            Close
+            Close File
           </MenuItem>
           <MenuItem key="deleteSnippet" onClick={() => {setOpenDelete(!openDelete)}}>
-            Delete
+            Delete File
           </MenuItem>
         </Menu>
         <Typography
@@ -311,6 +329,7 @@ const mapDispatchToProps = (dispatch) => {
     setCurrentSnippetMeta: meta => dispatch(setCurrentSnippetMeta(meta)),
     updateEditorPreferences: props => dispatch(updateEditorPreferences(props)),
     closeSnippet: snippetMeta => dispatch(closeSnippet(snippetMeta)),
+    addNotification: (data, level) => dispatch(level(data)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SnippetManager);
