@@ -16,6 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from frontend import views
+from django.contrib.sitemaps import GenericSitemap
+from django.contrib.sitemaps.views import sitemap
+from snippets.models import Snippet
+
+info_dict = {
+    'queryset': Snippet.objects.all(),
+    'date_field': 'created',
+}
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
@@ -24,5 +32,6 @@ urlpatterns = [
     path('api/auth/', include('rest_auth.urls')),
     path('api/auth/registration/', include('rest_auth.registration.urls')),
     path('api/security/', include('security.urls')),
+    path('sitemap.xml', sitemap,{'sitemaps': {'snippets': GenericSitemap(info_dict, priority=0.6)}}, name='django.contrib.sitemaps.views.sitemap'),
     re_path(r'^', views.FrontendAppView.as_view()),
 ]

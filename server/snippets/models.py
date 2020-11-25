@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from users.models import User
 from snippets.constants import LANGUAGE_CHOICES, python
+from rest_framework.reverse import reverse
 
 class Snippet(models.Model):
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='snippets', on_delete=models.CASCADE)
@@ -20,3 +21,6 @@ class Snippet(models.Model):
 		"""
 		options = {'name': self.name} if self.name else {}
 		super(Snippet, self).save(*args, **kwargs)
+	
+	def get_absolute_url(self): 
+		return reverse('snippet-detail', args=[self.id])
