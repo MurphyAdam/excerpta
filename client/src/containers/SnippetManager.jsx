@@ -29,6 +29,8 @@ import FileDownloader from "js-file-download";
 import { error as notificationError } from 'react-notification-system-redux';
 import { notificationTemplate } from '../redux/methods';
 
+import Pagination from '@material-ui/lab/Pagination';
+
 const useStyles = makeStyles((theme) => ({
   menuList: {
     display: 'flex',
@@ -39,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
   },
   barElements: {
     marginRight: theme.spacing(2)
+  },
+  pagination: {
+    padding: theme.spacing(1.2),
   }
 }));
 
@@ -93,13 +98,28 @@ function SnippetManager (props){
     }
   }
 
+  const handlePaginationChange = v => {
+    // prevent user from reloading the same pagination
+    if(snippets.current !== v || !snippets.isLoading)
+      loadSnippets(v);
+      // each pagination object has a maximum of 10 objects, but may contain less.
+      // each object is mapped to a tabId: 0, 1, 2, n.
+      // when the user requests the next pagination, it loads and sets 
+      // some fields of currentSnippetMeta object, but not tabId, so for example
+      // if tabId was 7 before user loads new pagination, it stays so, and the new 
+      // pagination may contain less that 7 objects, and the tabId would be incorret 
+      // and out of focus. so after each pagination change, we also set the tabId to 0
+      // and it fixes all such issues.
+      setCurrentSnippetMeta({tabId: 0});
+  }
+
   useEffect(
     () => {
       if (isAuthenticated &&
           !snippets.snippets.length && 
           !snippets.isLoading && 
           !snippets.isLoaded &&
-          !snippets.isError) loadSnippets()
+          !snippets.isError) loadSnippets(1)
     }, 
     [isAuthenticated, snippets, loadSnippets]
   );
@@ -126,30 +146,30 @@ function SnippetManager (props){
           PaperProps={{
             style: {
               maxHeight: 48 * 4.5,
-              width: '25ch',
+              width: 'fit-content',
             },
           }}
         >
           <MenuItem onClick={() => {setOpenCreateNew(!openCreateNew)}}>
-            New File
+            New File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ctrl+Alt+N
           </MenuItem>
           <MenuItem key="saveLocally" 
             onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: ''}) }>
-            Save to local
+            Save to local&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ctrl+S
           </MenuItem>
           <MenuItem key="saveRemotely" 
             onClick={() => saveSnippet({id: currentSnippetMeta.id ,state: '[saving...]'}, true) }>
-            Save to server
+            Save to server&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ctrl+Alt+S
           </MenuItem>
           <MenuItem key="downloadSnippet" onClick={() => downloadSnippet(currentSnippetMeta.id)}>
-            Download File
+            Download File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ctrl+Alt+D
           </MenuItem>
           <MenuItem key="closeSnippet" 
             onClick={() => closeSnippet({id: currentSnippetMeta.id , tabId: currentSnippetMeta.tabId , state: 'closed'}) }>
             Close File
           </MenuItem>
           <MenuItem key="deleteSnippet" onClick={() => {setOpenDelete(!openDelete)}}>
-            Delete File
+            Delete File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ctrl+Alt+E
           </MenuItem>
         </Menu>
         <Typography
@@ -260,12 +280,27 @@ function SnippetManager (props){
                 editorPreferences={editorPreferences}
                 updateSnippet={updateSnippet} 
                 saveSnippet={saveSnippet} 
+                downloadSnippet={downloadSnippet}
                 createSnippetStateAction={{openCreateNew, setOpenCreateNew}}
-                deleteSnippetStateAction={{openDelete, setOpenDelete}} />
+                deleteSnippetStateAction={{openDelete, setOpenDelete}} 
+                />
             )
           }
           return null;
         }) 
+      }
+      {snippets.isLoaded && snippets.totalPages > 1 &&
+        <div className={classes.pagination}>
+          <Pagination 
+            count={snippets.totalPages} 
+            page={snippets.current}
+            variant="outlined" 
+            color="secondary" 
+            onChange={(event, value) => handlePaginationChange(value)}
+            showFirstButton 
+            showLastButton
+            />
+        </div>
       }
       {openCreateNew &&
         <NewSnippet 
@@ -314,7 +349,7 @@ SnippetManager.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    snippets: state.snippets,
+    snippets: state.snippets.mySnippets,
     currentSnippetMeta: state.snippets.currentSnippetMeta,
     editorPreferences: state.ui.editor,
   };
@@ -322,7 +357,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loadSnippets: () => dispatch(getSnippets()),
+    loadSnippets: page => dispatch(getSnippets(page)),
     updateSnippet: data => dispatch(updateSnippet(data)),
     saveSnippet: (data, remote) => dispatch(saveSnippet(data, remote)),
     deleteSnippet: snippetMeta => dispatch(deleteSnippet(snippetMeta)),
