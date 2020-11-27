@@ -19,15 +19,16 @@ import { filterArrayWithId, concatArrayOfObjectsAndSortWithDateAsc,
 	updateObjectInArrayWithId } from '../methods';
 
 const INITIAL_STATE = {
-		snippets: [],
-		count: 0,
-		isLoading: false,
-		isLoaded: false,
-		privateSnippets: {
+		mySnippets: {
 			snippets: [],
 			count: 0,
-			prev: null,
-			next: null,
+			current: null,
+			pageSize: null,
+			totalPages: null,
+			links: {
+				previous: null,
+				next: null,
+			},
 			isLoading: false,
 			isLoaded: false,
 		},
@@ -39,8 +40,13 @@ const INITIAL_STATE = {
 		publicSnippets: {
 			snippets: [],
 			count: 0,
-			prev: null,
-			next: null,
+			current: null,
+			pageSize: null,
+			totalPages: null,
+			links: {
+				previous: null,
+				next: null,
+			},
 			isLoading: false,
 			isLoaded: false,
 		}
@@ -65,52 +71,71 @@ function snippets(state=INITIAL_STATE, action) {
 	switch (action.type){
 		case CREATE_SNIPPET: {
 			return {...state,
-					snippets: [...state.snippets, action.payload],
-					count: state.count + 1,
-					// we use this to push focus to the newly created snippet. 
-					// TabIds start at 0 (since they are arrays themeselves), 
-					// so when we map an array of length 3 for example, the result is:
-					// array[0] = tabId 0, array[1] = tabId 1 and so on, so an array of 3 would end
-					// at array[2] = tabId 2; but here we use count to set TabId, and count is really 
-					// just array.length so: TabId = 3, which is in plain words would mean it's the 
-					// fourth value (tab) (which doesn't exist). 
-					// Take away: TabId = currentCount || array.currentLength - 1.
-					// even though we increameant the count above and use it again below, the one below, 
-					// is still the old count, that's why we are not running into problems.
-					currentSnippetMeta: {...state.currentSnippetMeta, tabId: state.count}, 
+					mySnippets: {...state.mySnippets, 
+						snippets: [...state.mySnippets.snippets, action.payload],
+						count: state.mySnippets.count + 1,
+						// we use this to push focus to the newly created snippet. 
+						// TabIds start at 0 (since they are arrays themeselves), 
+						// so when we map an array of length 3 for example, the result is:
+						// array[0] = tabId 0, array[1] = tabId 1 and so on, so an array of 3 would end
+						// at array[2] = tabId 2; but here we use count to set TabId, and count is really 
+						// just array.length so: TabId = 3, which is in plain words would mean it's the 
+						// fourth value (tab) (which doesn't exist). 
+						// Take away: TabId = currentCount || array.currentLength - 1.
+						// even though we increameant the count above and use it again below, the one below, 
+						// is still the old count, that's why we are not running into problems.
+						},
+					currentSnippetMeta: {...state.currentSnippetMeta, tabId: state.mySnippets.count}, 
 			};
 		}
 		case UPDATE_SNIPPET:
 		case SAVE_SNIPPET:
 		case SAVE_SNIPPET_REMOTE: {
 			return {...state,
-					snippets: updateObjectInArrayWithId(state.snippets, action.payload),
+				mySnippets: {...state.mySnippets,
+					snippets: updateObjectInArrayWithId(state.mySnippets.snippets, action.payload),
+				}
 			};
 		}
 		case FETCH_SNIPPETS: {
-			return {...INITIAL_STATE, 
-					isLoading: true,
+			return {...state, 
+					mySnippets: {
+						...state.mySnippets,
+						isLoading: true,
+						isLoaded: false, 
+					}
 				}
 			}
 		case FETCH_SNIPPETS_SUCCESS: {
+			const { results, count, links, current, page_size, total_pages } = action.payload;
 			// first element of the array is first file the user is faced with, so
 			// we automatically pass context to it using the currentSnippetMeta
-			const data = action.payload.results[0];
+			const currentMetaData = results[0];
 			return {...state,
-					snippets: concatArrayOfObjectsAndSortWithDateAsc(action.payload.results || state.snippets),
-					count: action.payload.count,
-					isLoading: false,
-					isLoaded: true, 
+					mySnippets: {
+						snippets: concatArrayOfObjectsAndSortWithDateAsc(results),
+						count: count,
+						previous: links.previous,
+						next: links.next,
+						current: current,
+						pageSize: page_size,
+						totalPages: total_pages,
+						isLoading: false,
+						isLoaded: true, 
+					},
 					currentSnippetMeta: {...state.currentSnippetMeta,
-						name: data.name || state.currentSnippetMeta.name,
-						id: data.id || state.currentSnippetMeta.id,
+						name: currentMetaData.name || state.currentSnippetMeta.name,
+						id: currentMetaData.id || state.currentSnippetMeta.id,
 					}
 				}
 			}
 		case FETCH_SNIPPETS_FAILURE: {
 			return {...state, 
-					isLoading: false,
-					isLoaded: true, 
+					mySnippets: {
+						...state.mySnippets,
+						isLoading: false,
+						isLoaded: true, 
+					}
 				}
 			}
 		case FETCH_PUBLIC_SNIPPETS: {
@@ -123,11 +148,16 @@ function snippets(state=INITIAL_STATE, action) {
 				}
 			}
 		case FETCH_PUBLIC_SNIPPETS_SUCCESS: {
+			const { results, count, links, current, page_size, total_pages } = action.payload;
 			return {...state,
 					publicSnippets: {
-						snippets: concatArrayOfObjectsAndSortWithDateAsc(action.payload.results || 
-							state.publicSnippets.snippets),
-						count: action.payload.count,
+						snippets: concatArrayOfObjectsAndSortWithDateAsc(results),
+						count: count,
+						previous: links.previous,
+						next: links.next,
+						current: current,
+						pageSize: page_size,
+						totalPages: total_pages,
 						isLoading: false,
 						isLoaded: true, 
 					}
@@ -144,8 +174,8 @@ function snippets(state=INITIAL_STATE, action) {
 			}
 		case DELETE_SNIPPET: {
 			const { id } = action.payload;
-			const totalTabsCount = state.snippets.length - 1;
-			const currentSnippetIndex = state.snippets.findIndex(
+			const totalTabsCount = state.mySnippets.snippets.length - 1;
+			const currentSnippetIndex = state.mySnippets.snippets.findIndex(
 			(s) => s.id === id
 			);
 			const nextSnippetIndex = (currentSnippetIndex + 1) <= totalTabsCount ? currentSnippetIndex + 1 : null;
@@ -169,15 +199,17 @@ function snippets(state=INITIAL_STATE, action) {
 					directionIndex = nextSnippetIndex;
 				}
 			}
-			const contextSnippet = state.snippets[directionIndex];
+			const contextSnippet = state.mySnippets.snippets[directionIndex];
 			directionIndex = directionIndex - 1 === - 1 ? 0 : directionIndex - 1;
 			return {...state,
-					snippets: filterArrayWithId(state.snippets, id),
-					count: state.count -1,
-					// we substracting 2 from count because:
-					// -1 element that's been filtered out so array.length === count
-					// -1 because TabId is always count - 1, therefore count - 2 to push focus
-					// to the last tab/ array element
+					mySnippets: {
+						snippets: filterArrayWithId(state.mySnippets.snippets, id),
+						count: state.mySnippets.count -1,
+						// we substracting 2 from count because:
+						// -1 element that's been filtered out so array.length === count
+						// -1 because TabId is always count - 1, therefore count - 2 to push focus
+						// to the last tab/ array element
+					},
 					currentSnippetMeta: {...state.currentSnippetMeta, 
 						id: contextSnippet.id, 
 						name: contextSnippet.name, 
@@ -204,10 +236,9 @@ function snippets(state=INITIAL_STATE, action) {
 		}
 		case INITIATE_AUTH_CLEANUP: {
 			return {...state,
-				snippets: [],
-				count: 0,
-				isLoading: false,
-				isLoaded: false,
+				mySnippets: {
+					...INITIAL_STATE.mySnippets
+				},
 				currentSnippetMeta: {
 					...INITIAL_STATE.currentSnippetMeta
 				}
