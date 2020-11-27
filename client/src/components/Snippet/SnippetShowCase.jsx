@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Paper from '@material-ui/core/Paper';
@@ -56,7 +56,21 @@ export default function SnippetShowCase(props) {
   const theme = useTheme();
   const { height, width } = useWindowDimensions();
   const [activeStep, setActiveStep] = useState(0);
-  const maxSteps = snippets.length;
+  const [maxSteps, setMaxSteps] = useState(snippets.length);
+  const [currentSnippet, setCurrentSnippet] = useState(snippets[activeStep]);
+
+  useEffect(() => {
+    // when snippets.length changes, we would want to push control to the first
+    // item in the snippets array again. This makes sure we don't run into issues
+    // such as index out of range. as maxSteps is defined by snippets.length;
+    setActiveStep(prevActiveStep => 0);
+    setMaxSteps(snippets.length)
+  }, [snippets.length])
+
+  useEffect(() => {
+    setCurrentSnippet(snippets[activeStep]);
+    // eslint-disable-next-line
+  }, [activeStep])
 
   const editorDimensions = {
     width: (83/100) * width,
@@ -71,7 +85,6 @@ export default function SnippetShowCase(props) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const currentSnippet = snippets[activeStep];
   return (
     <div className={classes.root}>
       <Paper square elevation={0} className={classes.header}>
