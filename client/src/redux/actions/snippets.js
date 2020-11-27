@@ -29,14 +29,14 @@ export function setCurrentSnippetMeta(snippetMeta) {
 	}
 }
 
-const fetchSnippets = page => ActionCreatorFactory(FETCH_SNIPPETS);
+const fetchSnippets = () => ActionCreatorFactory(FETCH_SNIPPETS);
 const fetchSnippetsSuccess = data => ActionCreatorFactory(FETCH_SNIPPETS_SUCCESS, data);
 const fetchSnippetsError = error => ActionCreatorFactory(FETCH_SNIPPETS_FAILURE, error);
 
-export function getSnippets() {
+export function getSnippets(page=1) {
 	return (dispatch) => {
 		dispatch(fetchSnippets());
-		fetchSnippetsService()
+		fetchSnippetsService(page)
 		.then((response) => {
 			if (response.status !== 200) {
 				dispatch(fetchSnippetsError(response));
@@ -56,14 +56,14 @@ export function getSnippets() {
 	};
 }
 
-const fetchPublicSnippets = page => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS);
+const fetchPublicSnippets = () => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS);
 const fetchPublicSnippetsSuccess = data => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS_SUCCESS, data);
 const fetchPublicSnippetsError = error => ActionCreatorFactory(FETCH_PUBLIC_SNIPPETS_FAILURE, error);
 
-export function getPublicSnippets() {
+export function getPublicSnippets(page) {
 	return (dispatch) => {
 		dispatch(fetchPublicSnippets());
-		fetchPublicSnippetsService()
+		fetchPublicSnippetsService(page)
 		.then((response) => {
 			if (response.status !== 200) {
 				dispatch(fetchPublicSnippetsError(response));
@@ -106,7 +106,7 @@ const saveSnippetRemoteAction = data => ActionCreatorFactory(SAVE_SNIPPET_REMOTE
 export function saveSnippet(snippetData, remote=false) {
 	return (dispatch, getState) => {
 		dispatch(saveSnippetAction(snippetData));
-		let snippet = getState().snippets.snippets.find( snippet => snippet.id === snippetData.id );
+		let snippet = getState().snippets.mySnippets.snippets.find( snippet => snippet.id === snippetData.id );
 		if(snippet){
 			snippet = {...snippet, state: ''};
 		}
