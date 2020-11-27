@@ -26,7 +26,8 @@ config.setModuleUrl(
 
 const TabContainer = (props) => {
   const { snippet, tab, index, editorPreferences, 
-    updateSnippet, saveSnippet, createSnippetStateAction, deleteSnippetStateAction } = props;
+    updateSnippet, saveSnippet, createSnippetStateAction, 
+    deleteSnippetStateAction, downloadSnippet } = props;
   const { height, width } = useWindowDimensions();
   const { openCreateNew, setOpenCreateNew } = createSnippetStateAction;
   const { openDelete, setOpenDelete } = deleteSnippetStateAction;
@@ -55,13 +56,18 @@ const TabContainer = (props) => {
       exec: () => saveSnippet({id: snippet.id ,state: '[saving...]'}, true) 
     },
     {
+      name: 'Download snippet file', 
+      bindKey: {win: 'Ctrl-Alt-d', mac: 'Command-Alt-d'}, 
+      exec: () => downloadSnippet(snippet.id) 
+    },
+    {
       name: 'New snippet', 
       bindKey: {win: 'Ctrl-Alt-n', mac: 'Command-Alt-n'}, 
       exec: () => setOpenCreateNew(!openCreateNew) 
     },
     {
       name: 'Delete snippet', 
-      bindKey: {win: 'Ctrl-Alt-d', mac: 'Command-Alt-d'}, 
+      bindKey: {win: 'Ctrl-Alt-e', mac: 'Command-Alt-e'}, 
       exec: () => setOpenDelete(!openDelete) 
     }
   ];
