@@ -7,7 +7,7 @@ from rest_framework.reverse import reverse
 class Snippet(models.Model):
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='snippets', on_delete=models.CASCADE)
 	created = models.DateTimeField(auto_now_add=True)
-	name = models.CharField(max_length=100, blank=True, default='')
+	name = models.CharField(max_length=100, blank=False)
 	code = models.TextField(default='# write some code')
 	state = models.CharField(max_length=100, blank=True, default='')
 	language = models.CharField(choices=LANGUAGE_CHOICES, default=python, max_length=100)
