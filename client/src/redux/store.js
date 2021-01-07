@@ -3,7 +3,9 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import rootReducer from './reducers';
 
-//({trace: true})
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(rootReducer, composeEnhancer(applyMiddleware(thunk, logger)));
+
+const store = createStore(rootReducer, 
+	composeEnhancer(applyMiddleware(thunk, logger)));
+
 export default store;

@@ -48,7 +48,10 @@ class MySnippetViewSet(viewsets.ModelViewSet):
 		snippets = user.snippets.all()
 		if snippets:
 			return snippets
-		return [Snippet.objects.get(pk=72)]
+		default = Snippet.objects.filter(id=72)
+		if default:
+			return default
+		return []
 
 	def perform_create(self, serializer):
 		serializer.save(owner=self.request.user)

@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { getCookie } from '../util/Cookies';
 
+
+// { "detail": "CSRF Failed: CSRF token missing or incorrect." }
+
 // window origin - base url
 const API_ENDPOINT = `${window.location.origin}/api`;
 

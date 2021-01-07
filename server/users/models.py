@@ -18,7 +18,7 @@ class User(AbstractUser):
     def links(self):
         return {'avatar': self.avatar(128), }
 
-    def avatar(self, size=128):
+    def avatar(self, size: int=128):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=monsterid&s={}'.format(
             digest, size)
