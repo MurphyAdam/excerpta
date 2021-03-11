@@ -124,8 +124,8 @@ function snippets(state=INITIAL_STATE, action) {
 						isLoaded: true, 
 					},
 					currentSnippetMeta: {...state.currentSnippetMeta,
-						name: currentMetaData.name || state.currentSnippetMeta.name,
-						id: currentMetaData.id || state.currentSnippetMeta.id,
+						name: currentMetaData?.name || state.currentSnippetMeta.name,
+						id: currentMetaData?.id || state.currentSnippetMeta.id,
 					}
 				}
 			}
