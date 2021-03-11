@@ -39,8 +39,10 @@ function app(state=INITIAL_STATE, action) {
 			}	
 		}
 		case FETCH_SNIPPETS_SUCCESS: {
+			const results = action.payload?.results;
+			const mode = results ? results[0].language : null;
 			return {...state, 
-				editor: {...state.editor, mode: action.payload.results[0].language}
+				editor: {...state.editor, mode: mode}
 			}
 		}
 		default:
