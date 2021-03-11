@@ -2,8 +2,6 @@ import axios from 'axios';
 import { getCookie } from '../util/Cookies';
 
 
-// { "detail": "CSRF Failed: CSRF token missing or incorrect." }
-
 // window origin - base url
 const API_ENDPOINT = `${window.location.origin}/api`;
 
@@ -14,20 +12,45 @@ const api = axios.create({
     withCredentials: true
 });
 
+const jwtToken = () => {
+  const token = localStorage.getItem('jwtKey');
+  if(token) {
+    return {
+      exists: true,
+      token: JSON.parse(token)
+    }
+  }
+  return {
+    exists: false,
+    token: null
+  }
+}
+
 // Use interceptor to inject the token to requests
 api.interceptors.request.use(request => {
     request.headers['X-CSRFTOKEN'] = getCookie('csrftoken');
+    const tokenData = jwtToken();
+    request.headers['Authorization'] = tokenData.exists ?
+     `Token ${tokenData.token}`
+     : '';
     return request;
 });
 
 api.interceptors.response.use((response) => {
     return response;
-}, (error) => {
-    // Return any error which is not due to authentication back to the calling service
-    if (error.response.status !== 403) {
-      return new Promise((resolve, reject) => {
+}, async (error) => {
+    // Return any error which is not due to authentication | authorization back to the calling service
+    const status = error.response.status;
+    if (![401, 403].includes(status)) {
+      return new Promise((_resolve, reject) => {
         reject(error);
       });
+    }
+    // Return any error which is not due to authorization back to the calling service
+    // but first let's remove the Authorization token from headers for DRF
+    if (status === 401) {
+      delete api.defaults.headers.common["Authorization"];
+      localStorage.removeItem('jwtKey');
     }
     // Logout user if token refresh didn't work or user is disabled
     if (error.config.url === '/security/get-csrf/') {
@@ -36,25 +59,21 @@ api.interceptors.response.use((response) => {
       });
     }
     // Try request again with new token
-    return api.get('/security/get-csrf/')
-      .then((response) => {
-
-        // New request with new token
-        const config = error.config;
-        config.headers['X-CSRFTOKEN'] = response.data.csrftoken;
-
-        return new Promise((resolve, reject) => {
-          api.request(config).then(response => {
-            resolve(response);
-          }).catch((error) => {
-            reject(error);
-          })
+    try {
+      const response = await api.get('/security/get-csrf/');
+      // New request with new token
+      const config = error.config;
+      config.headers['X-CSRFTOKEN'] = response.data.csrftoken;
+      return await new Promise((resolve_1, reject_3) => {
+        api.request(config).then(response_1 => {
+          resolve_1(response_1);
+        }).catch((error_1) => {
+          reject_3(error_1);
         });
-
-      })
-      .catch((error) => {
-      	Promise.reject(error);
       });
+    } catch (error_2) {
+      Promise.reject(error_2);
+    }
 }
 );
 
