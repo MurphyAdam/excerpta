@@ -21,6 +21,11 @@ __pycache__
 # testing
 /coverage
 
+# server static and media
+# static should be collected only on prod
+
+server/staticfiles
+
 # production
 /build
 
