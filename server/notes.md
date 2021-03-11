@@ -19,7 +19,7 @@ Refused to execute script from 'http://localhost:3000/worker-css.js' because its
 #Notes
 
 1. start a new Django project:
-> django-admin startprojec
+> django-admin startproject
 
 2. start a new Django app
 > django-admin startapp	
