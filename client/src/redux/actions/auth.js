@@ -39,59 +39,74 @@ const userLogoutSuccess = data => ActionCreatorFactory(USER_LOGOUT_SUCCESS, data
 
 const initiateAuthCleanup = () => ActionCreatorFactory(INITIATE_AUTH_CLEANUP);
 
-export function getCurrentUser(){
-	return (dispatch) => {
-		const currentUserId = JSON.parse(localStorage.getItem('currentUser'));
-		if (currentUserId !== null && 
-			currentUserId !== undefined && 
-			!isNaN(parseInt(currentUserId))
-			) {
-			dispatch(loadUserRequest());
-			fetchCurrentUser(currentUserId)
-			.then((response) => {
-				if (response.status !== 200) {
-					dispatch(loadUserError());
-				}
-				return response
-			})
-			.then((response) => {
-				dispatch(loadUserSuccess(response.data));
-				dispatch(initiateAuthCleanup());
-			})
-			.catch(() => {
-				dispatch(loadUserError());
-			})
-
-		}
-	};
+export function getCurrentUser() {
+    return (dispatch) => {
+        const currentUserId = JSON.parse(localStorage.getItem("currentUser"));
+        if (
+            currentUserId !== null &&
+            currentUserId !== undefined &&
+            !isNaN(parseInt(currentUserId))
+        ) {
+            dispatch(loadUserRequest());
+            fetchCurrentUser(currentUserId)
+                .then((response) => {
+                    if (response.status !== 200) {
+                        dispatch(loadUserError());
+                    }
+                    return response;
+                })
+                .then((response) => {
+                    dispatch(loadUserSuccess(response.data));
+                    dispatch(initiateAuthCleanup());
+                    dispatch(notificationRemoveAll());
+                    localStorage.setItem(
+                        "currentUser",
+                        JSON.stringify(response.data.user.id)
+                    );
+                    localStorage.setItem('jwtKey', JSON.stringify(response.data.key));
+                })
+                .catch(() => {
+                    dispatch(loadUserError());
+                });
+        }
+    };
 }
 
 export function authenticate(formData) {
-	return (dispatch) => {
-		dispatch(userLoginRequest());
-		login(formData)
-		.then((response) => {
-			if (response.status !== 200) {
-				dispatch(userLoginError(response));
-			}
-			return response;
-		})
-		.then((response) => {
-			dispatch(userLoginSuccess(response.data));
-			dispatch(initiateAuthCleanup());
-			dispatch(notificationRemoveAll());
-			localStorage.setItem('currentUser', JSON.stringify(response.data.user.id));
-		})
-		.catch((error) => {
-			dispatch(userLoginError(error));
-			dispatch(notificationError({'title': error.response.data.message || 
-				error.request.statusText,
-				'message': `Failed to sign in`,
-				'children': notificationTemplate.renderArray(error.response?.data?.errors),
-			}));
-		})
-	};
+    return (dispatch) => {
+        dispatch(userLoginRequest());
+        login(formData)
+            .then((response) => {
+                if (response.status !== 200) {
+                    dispatch(userLoginError(response));
+                }
+                return response;
+            })
+            .then((response) => {
+                dispatch(userLoginSuccess(response.data));
+                dispatch(initiateAuthCleanup());
+                dispatch(notificationRemoveAll());
+                localStorage.setItem(
+                    "currentUser",
+                    JSON.stringify(response.data.user.id)
+                );
+                localStorage.setItem('jwtKey', JSON.stringify(response.data.key));
+            })
+            .catch((error) => {
+                dispatch(userLoginError(error));
+                dispatch(
+                    notificationError({
+                        title: error?.response?.data?.message || error?.request?.statusText,
+                        message: `Failed to sign in`,
+                        children: notificationTemplate.renderArray(
+                            error?.response?.data?.errors
+                        ),
+                    })
+                );
+            });
+    };
 }
+
 
 export function register(formData) {
 	return (dispatch) => {
