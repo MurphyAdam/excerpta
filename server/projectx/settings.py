@@ -127,19 +127,24 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "../client/build/static"),
+    os.path.join(BASE_DIR, '../client/build'),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 ALLOWED_HOSTS = ['*']
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
+    'TOKEN_SERIALIZER': 'users.serializers.TokenSerializer'
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'snippets.pagination.CustomPageNumberPagination',
     'PAGE_SIZE': 10,
@@ -156,19 +161,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 AUTH_USER_MODEL = 'users.User'
 
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
-    'TOKEN_SERIALIZER': 'users.serializers.TokenSerializer'
-}
-
-
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://127.0.0.1:8000',
 )
 
 CORS_ALLOW_CREDENTIALS = True
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Activate Django-Heroku.
 # django_heroku.settings(locals())
