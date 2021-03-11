@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { connect } from 'react-redux';
-import SnippetManager from './SnippetManager';
-import About from './About';
+import { CircularLoader } from '../components/Common/Loaders';
+
+const SnippetManager = lazy(() => import('./SnippetManager'));
+const About = lazy(() => import('./About'));
 
 const Home = (props) => {
-	
-  const { currentUser, isAuthenticated } = {...props};
+
+  const { currentUser, isAuthenticated } = { ...props };
 
   return (
     <React.Fragment>
       {!isAuthenticated
         ?
-        <React.Fragment>
+        <React.Suspense fallback={<CircularLoader />}>
           <About />
-        </React.Fragment>
+        </React.Suspense>
         :
-        <SnippetManager currentUser={currentUser}
-          isAuthenticated={isAuthenticated} />
+        <React.Suspense fallback={<CircularLoader />}>
+          <SnippetManager currentUser={currentUser}
+            isAuthenticated={isAuthenticated} />
+        </React.Suspense>
       }
     </React.Fragment>
   );
