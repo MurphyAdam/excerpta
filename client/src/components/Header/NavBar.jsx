@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {makeStyles} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import PeopleIcon from '@material-ui/icons/People';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
@@ -57,8 +56,8 @@ const useStyles = makeStyles((theme) => ({
 
 function PrimaryAppBar(props) {
 
-  const { currentUser, isAuthenticated, logout, 
-    darkModeOn, toggleDarkMode } = {...props}
+  const { currentUser, isAuthenticated, logout,
+    darkModeOn, toggleDarkMode } = { ...props }
   const history = useHistory();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -78,7 +77,7 @@ function PrimaryAppBar(props) {
   };
 
   const handleLogout = () => {
-    if(isAuthenticated){
+    if (isAuthenticated) {
       logout();
       // we setAnchorEl(null) to avoid the menu being open
       // after a login
@@ -88,8 +87,8 @@ function PrimaryAppBar(props) {
   }
 
   const handleThemeChange = e => {
-    if(e.target.checked) toggleDarkMode({theme:'dark', darkModeOn:true});
-    else toggleDarkMode({theme:'light', darkModeOn:false});
+    if (e.target.checked) toggleDarkMode({ theme: 'dark', darkModeOn: true });
+    else toggleDarkMode({ theme: 'light', darkModeOn: false });
   }
 
   const menuId = 'primary-account-menu';
@@ -102,11 +101,6 @@ function PrimaryAppBar(props) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}>
-      <MenuItem component={RouterLink} 
-        to={`/${currentUser.user?.username}/profile`}
-        onClick={handleMenuClose}>
-        Profile
-      </MenuItem>
       <MenuItem onClick={handleLogout}>
         Logout
       </MenuItem>
@@ -125,29 +119,18 @@ function PrimaryAppBar(props) {
       onClose={handleMobileMenuClose}>
 
       <MenuItem>
-        <IconButton 
-          aria-label="Home" 
-          component={RouterLink} 
-          to="/" 
+        <IconButton
+          aria-label="Home"
+          component={RouterLink}
+          to="/"
           color="inherit">
           <HomeIcon />
         </IconButton>
         <p>Home</p>
       </MenuItem>
-      {isAuthenticated 
+      {isAuthenticated
         ?
         [
-          <MenuItem key="users">
-            <IconButton 
-              aria-label="show users" 
-              component={RouterLink} 
-              to="/users" 
-              color="inherit">
-              <PeopleIcon />
-            </IconButton>
-            <p>Users</p>
-          </MenuItem>,
-
           <MenuItem key="profileMenu" onClick={handleProfileMenuOpen}>
             <IconButton
               aria-label="account of current user"
@@ -155,34 +138,34 @@ function PrimaryAppBar(props) {
               aria-haspopup="true"
               color="inherit"
               onClick={handleProfileMenuOpen}>
-              <Avatar src={currentUser.user.links.avatar} 
-                alt={currentUser.user.username}> {currentUser.user.username[0]} 
+              <Avatar src={currentUser.user.links.avatar}
+                alt={currentUser.user.username}> {currentUser.user.username[0]}
               </Avatar>
             </IconButton>
             <p>Profile</p>
           </MenuItem>
-          ]
+        ]
         :
-          <MenuItem key="login">
-            <IconButton 
-              aria-label="Login" 
-              component={RouterLink} 
-              to="/auth/signin" 
-              color="inherit">
-              <ExitToAppIcon />
-            </IconButton>
-            <p>Login</p>
-          </MenuItem>
+        <MenuItem key="login">
+          <IconButton
+            aria-label="Login"
+            component={RouterLink}
+            to="/auth/signin"
+            color="inherit">
+            <ExitToAppIcon />
+          </IconButton>
+          <p>Login</p>
+        </MenuItem>
       }
       <MenuItem key="darkMode">
-            <Switch
-              checked={darkModeOn}
-              color="secondary"
-              onChange={handleThemeChange}
-              name="theme"
-              icon={<Brightness4Icon />}
-              inputProps={{ 'aria-label': 'set them (default: light)' }}
-            />
+        <Switch
+          checked={darkModeOn}
+          color="secondary"
+          onChange={handleThemeChange}
+          name="theme"
+          icon={<Brightness4Icon />}
+          inputProps={{ 'aria-label': 'set them (default: light)' }}
+        />
         <p>Dark mode</p>
       </MenuItem>
 
@@ -194,27 +177,27 @@ function PrimaryAppBar(props) {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar variant="dense" color="primary">
           <Typography variant="h4" noWrap>
-              <Button 
-                component={RouterLink} 
-                color="inherit" 
-                variant="text"
-                className={classes.title}
-                to="/">
-                  Excerpta
+            <Button
+              component={RouterLink}
+              color="inherit"
+              variant="text"
+              className={classes.title}
+              to="/">
+              Excerpta
               </Button>
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button component={RouterLink} 
-              color="inherit" 
-              className={classes.AppBarButton} 
+            <Button component={RouterLink}
+              color="inherit"
+              className={classes.AppBarButton}
               to="/">
               Home
             </Button>
 
-            <Button component={RouterLink} 
-              color="inherit" 
-              className={classes.AppBarButton} 
+            <Button component={RouterLink}
+              color="inherit"
+              className={classes.AppBarButton}
               to="/snippets">
               Snippets
             </Button>
@@ -228,7 +211,7 @@ function PrimaryAppBar(props) {
               inputProps={{ 'aria-label': 'set them (default: light)' }}
             />
 
-            {isAuthenticated 
+            {isAuthenticated
               ?
               <React.Fragment>
                 <IconButton
@@ -238,18 +221,18 @@ function PrimaryAppBar(props) {
                   aria-haspopup="true"
                   onClick={handleProfileMenuOpen}
                   color="inherit">
-                  <Avatar src={currentUser.user.links.avatar} 
+                  <Avatar src={currentUser.user.links.avatar}
                     className={classes.Avatar}
-                    alt={currentUser.user.username}> {currentUser.user.username[0]} 
+                    alt={currentUser.user.username}> {currentUser.user.username[0]}
                   </Avatar>
                 </IconButton>
               </React.Fragment>
               :
               <React.Fragment>
-                <IconButton 
-                  aria-label="Login" 
-                  component={RouterLink} 
-                  to="/auth/signin" 
+                <IconButton
+                  aria-label="Login"
+                  component={RouterLink}
+                  to="/auth/signin"
                   color="inherit">
                   <ExitToAppIcon />
                 </IconButton>
@@ -290,8 +273,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-  toggleDarkMode: (payload) => dispatch(SetAppTheme(payload)),
-  logout: () => dispatch(logout()),
+    toggleDarkMode: (payload) => dispatch(SetAppTheme(payload)),
+    logout: () => dispatch(logout()),
   };
 };
 
