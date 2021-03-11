@@ -24,7 +24,8 @@ __pycache__
 # server static and media
 # static should be collected only on prod
 
-server/staticfiles
+server/static
+server/statifiles
 
 # production
 /build
